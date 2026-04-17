@@ -297,11 +297,16 @@ Be fair but rigorous. Consider that this is a spoken answer so minor grammar iss
   }
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`\n  Leo server running at http://localhost:${PORT}`);
-  console.log(`  Upload page: http://localhost:${PORT}/upload`);
-  console.log(`  Ask AI page: http://localhost:${PORT}/ask-ai`);
-  console.log(`  Oral Viva:   http://localhost:${PORT}/oral-viva`);
-  console.log(`  API endpoints: /api/generate-questions, /api/ask-ai, /api/evaluate-viva\n`);
-});
+// Export the Express API for Vercel
+module.exports = app;
+
+// Start server locally (ignored by Vercel)
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`\n  Leo server running at http://localhost:${PORT}`);
+    console.log(`  Upload page: http://localhost:${PORT}/upload`);
+    console.log(`  Ask AI page: http://localhost:${PORT}/ask-ai`);
+    console.log(`  Oral Viva:   http://localhost:${PORT}/oral-viva`);
+    console.log(`  API endpoints: /api/generate-questions, /api/ask-ai, /api/evaluate-viva\n`);
+  });
+}

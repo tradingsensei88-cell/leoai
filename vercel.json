@@ -1,0 +1,35 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "**/*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "css/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "images/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "js/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/server.js" },
+    { "source": "/upload", "destination": "/upload.html" },
+    { "source": "/ask-ai", "destination": "/ask-ai.html" },
+    { "source": "/oral-viva", "destination": "/oral-viva.html" },
+    { "source": "/about-us", "destination": "/about-us.html" },
+    { "source": "/how-it-works", "destination": "/how-it-works.html" },
+    { "source": "/contact-us", "destination": "/contact-us.html" },
+    { "source": "/news", "destination": "/news.html" }
+  ]
+}

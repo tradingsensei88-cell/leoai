@@ -1,0 +1,1993 @@
+<!DOCTYPE html>
+<html data-wf-page="oral-viva-page" data-wf-site="6501f1891917bde75ab542ee" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Oral Viva Practice | Leo</title>
+  <meta content="Practice your viva answers orally and get AI-powered evaluation with detailed scoring." name="description"/>
+  <meta content="Oral Viva Practice | Leo" property="og:title"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <link href="css/phunk-creative.shared.41c159b45.min.css" rel="stylesheet" type="text/css"/>
+  <link href="images/1-modified.png" rel="shortcut icon" type="image/x-icon"/>
+  <link href="images/1-modified.png" rel="apple-touch-icon"/>
+
+  <!-- PDF.js for PDF text extraction -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <!-- Mammoth.js for DOCX text extraction -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+
+  <style>
+    [data-w-id] { opacity: 1 !important; transform: none !important; }
+    html, body { overflow-x: hidden !important; }
+    .page-wrapper { overflow-x: hidden !important; }
+
+    /* ===== Oral Viva Core ===== */
+    .oral-section {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8rem 2rem 4rem;
+      background: #030303;
+    }
+    .oral-section.hidden { display: none; }
+
+    .oral-container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .oral-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .oral-header .pill-item { display: inline-flex; margin-bottom: 1.5rem; }
+    .oral-header h1 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700; color: #fff;
+      margin-bottom: 1rem; line-height: 1.15;
+    }
+    .oral-header p {
+      color: rgba(255,255,255,0.55);
+      font-size: 1.05rem; max-width: 540px;
+      margin: 0 auto; line-height: 1.6;
+    }
+
+    /* ===== Ambient Glow ===== */
+    .oral-ambient {
+      position: absolute; inset: 0; z-index: 0;
+      overflow: hidden; pointer-events: none;
+    }
+    .oral-ambient::before {
+      content: ''; position: absolute;
+      top: -20%; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(251,146,60,0.06) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    /* ===== Step 1: Upload for Oral Viva ===== */
+    .oral-upload-zone {
+      position: relative; width: 100%;
+      border-radius: 16px; overflow: hidden;
+      cursor: pointer; transition: transform 0.3s ease;
+    }
+    .oral-upload-zone:hover { transform: scale(1.005); }
+    .oral-upload-zone.has-file { cursor: default; }
+    .oral-upload-zone.has-file:hover { transform: none; }
+    .oral-upload-zone-inner { position: relative; padding: 3rem 2rem; z-index: 2; }
+
+    .grid-pattern-wrapper {
+      position: absolute; inset: 0;
+      mask-image: radial-gradient(ellipse at center, white, transparent);
+      -webkit-mask-image: radial-gradient(ellipse at center, white, transparent);
+      overflow: hidden;
+    }
+    .grid-pattern {
+      display: flex; flex-wrap: wrap; gap: 1px;
+      width: 100%; height: 100%; background: #171717;
+    }
+    .grid-cell { width: 40px; height: 40px; flex-shrink: 0; border-radius: 2px; }
+    .grid-cell-even { background: #0a0a0a; }
+    .grid-cell-odd { background: #0a0a0a; box-shadow: 0px 0px 1px 3px rgba(0,0,0,1) inset; }
+
+    .upload-content {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center;
+    }
+    .upload-content .upload-title {
+      position: relative; z-index: 20;
+      font-size: 1rem; font-weight: 700; color: #d4d4d4; margin-bottom: 0.5rem;
+    }
+    .upload-content .upload-subtitle {
+      position: relative; z-index: 20;
+      font-size: 1rem; font-weight: 400; color: #737373; margin-bottom: 0;
+    }
+    .upload-icon-area {
+      position: relative; width: 100%;
+      max-width: 8rem; margin: 2.5rem auto 0;
+    }
+    .upload-icon-box {
+      position: relative; z-index: 40;
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; height: 8rem; border-radius: 8px;
+      background: #171717;
+      box-shadow: 0px 10px 50px rgba(0,0,0,0.1);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+    }
+    .oral-upload-zone:hover .upload-icon-box {
+      transform: translate(20px, -20px);
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    }
+    .oral-upload-zone.has-file:hover .upload-icon-box { transform: none; box-shadow: none; }
+    .upload-icon-box svg { width: 20px; height: 20px; color: #fb923c; }
+    .upload-dashed-box {
+      position: absolute; inset: 0; z-index: 30;
+      display: flex; align-items: center; justify-content: center;
+      height: 8rem; border-radius: 8px;
+      border: 2px dashed #fb923c; background: transparent;
+      opacity: 0; transition: opacity 0.4s ease;
+    }
+    .oral-upload-zone:hover .upload-dashed-box { opacity: 1; }
+    .oral-upload-zone.has-file:hover .upload-dashed-box { opacity: 0; }
+    .oral-upload-zone.drag-active .upload-dashed-box { opacity: 1; }
+    .oral-upload-zone.drag-active .upload-icon-box {
+      transform: translate(20px, -20px);
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    }
+    .drop-text { display: none; flex-direction: column; align-items: center; gap: 0.5rem; color: #a3a3a3; font-size: 0.875rem; }
+    .oral-upload-zone.drag-active .drop-text { display: flex; }
+    .oral-upload-zone.drag-active .upload-icon-only { display: none; }
+    .file-input-hidden { display: none; }
+
+    /* File card */
+    .file-card {
+      position: relative; z-index: 40;
+      display: flex; flex-direction: column; gap: 0.5rem;
+      padding: 1rem 1.25rem; background: #171717;
+      border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      animation: fileCardIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      opacity: 0; transform: translateY(10px); margin-top: 1.5rem;
+    }
+    @keyframes fileCardIn { to { opacity: 1; transform: translateY(0); } }
+    .file-card-top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+    .file-card-name { font-size: 0.95rem; color: #d4d4d4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px; }
+    .file-card-size { flex-shrink: 0; font-size: 0.8rem; color: #fff; background: #262626; padding: 0.2rem 0.6rem; border-radius: 6px; }
+    .file-card-bottom { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+    .file-card-type { font-size: 0.8rem; color: #a3a3a3; background: #262626; padding: 0.15rem 0.5rem; border-radius: 4px; }
+    .file-card-modified { font-size: 0.8rem; color: #a3a3a3; }
+    .file-card-remove {
+      position: absolute; top: 0.75rem; right: 0.75rem;
+      width: 24px; height: 24px; border-radius: 50%;
+      background: rgba(255,255,255,0.06); border: none;
+      color: #a3a3a3; cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      transition: background 0.2s ease, color 0.2s ease;
+      font-size: 14px; line-height: 1;
+    }
+    .file-card-remove:hover { background: rgba(239,68,68,0.15); color: #ef4444; }
+
+    /* Formats */
+    .upload-formats { display: flex; justify-content: center; gap: 0.75rem; margin-top: 2rem; flex-wrap: wrap; }
+    .format-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.4rem 0.85rem; border-radius: 100px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.45); font-size: 0.78rem;
+      font-weight: 500; letter-spacing: 0.02em;
+    }
+    .format-badge svg { width: 14px; height: 14px; opacity: 0.6; }
+
+    /* ===== Question Count Selector ===== */
+    .question-selector {
+      margin-top: 2rem;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      animation: fadeSlideIn 0.5s ease forwards;
+    }
+    .question-selector.visible { display: flex; }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .question-selector-label {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.9rem; font-weight: 500;
+    }
+    .question-options {
+      display: flex; gap: 0.6rem; flex-wrap: wrap;
+      justify-content: center;
+    }
+    .question-option {
+      padding: 0.6rem 1.5rem;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.5);
+      font-size: 0.95rem; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .question-option:hover {
+      border-color: rgba(251,146,60,0.3);
+      color: rgba(255,255,255,0.8);
+      background: rgba(251,146,60,0.05);
+    }
+    .question-option.selected {
+      border-color: rgba(251,146,60,0.6);
+      color: #fb923c;
+      background: rgba(251,146,60,0.1);
+      box-shadow: 0 0 20px rgba(251,146,60,0.08);
+    }
+
+    /* ===== Custom Prompt Selector ===== */
+    .custom-prompt-selector {
+      margin-top: 1.5rem;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8rem;
+      animation: fadeSlideIn 0.5s ease forwards;
+      width: 100%;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .custom-prompt-selector.visible { display: flex; }
+    .custom-prompt-textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 0.8rem 1rem;
+      color: #fff;
+      font-size: 0.9rem;
+      resize: vertical;
+      min-height: 80px;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+    .custom-prompt-textarea:focus {
+      outline: none;
+      border-color: rgba(251,146,60,0.5);
+      background: rgba(255,255,255,0.06);
+      box-shadow: 0 0 15px rgba(251,146,60,0.1);
+    }
+    .custom-prompt-textarea::placeholder {
+      color: rgba(255,255,255,0.3);
+    }
+
+    /* Start button */
+    .start-viva-wrapper { display: flex; justify-content: center; margin-top: 2rem; }
+    .start-viva-btn {
+      display: none; align-items: center; gap: 0.6rem;
+      padding: 0.85rem 2.5rem;
+      background: linear-gradient(135deg, #fb923c, #f97316);
+      color: #000; font-weight: 700; font-size: 0.95rem;
+      border: none; border-radius: 8px; cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+    .start-viva-btn.visible { display: inline-flex; }
+    .start-viva-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(251,146,60,0.25);
+    }
+    .start-viva-btn:disabled { opacity: 0.5; pointer-events: none; }
+    .start-viva-btn svg { width: 18px; height: 18px; }
+
+    /* ===== Step 2: Viva Session ===== */
+    .viva-session {
+      display: none;
+      min-height: 100vh;
+      padding: 8rem 2rem 4rem;
+      background: #030303;
+    }
+    .viva-session.visible { display: block; }
+
+    .viva-session-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Progress bar */
+    .viva-progress {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .viva-progress-bar-outer {
+      flex: 1;
+      height: 6px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+    .viva-progress-bar-inner {
+      height: 100%;
+      background: linear-gradient(90deg, #fb923c, #f97316);
+      border-radius: 100px;
+      transition: width 0.5s ease;
+      width: 0%;
+    }
+    .viva-progress-text {
+      color: rgba(255,255,255,0.4);
+      font-size: 0.85rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* Question display */
+    .viva-question-display {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    .viva-question-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #fb923c;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+    .viva-question-text {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.5;
+    }
+    .viva-difficulty {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.2rem 0.6rem;
+      border-radius: 100px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin-top: 1rem;
+      text-transform: capitalize;
+    }
+    .viva-difficulty.easy { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+    .viva-difficulty.medium { background: rgba(251,191,36,0.12); color: #fbbf24; border: 1px solid rgba(251,191,36,0.2); }
+    .viva-difficulty.hard { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
+
+    /* Microphone area */
+    .mic-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .mic-btn {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      border: 2px solid rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.5);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.35s ease;
+    }
+    .mic-btn:hover {
+      border-color: rgba(251,146,60,0.4);
+      background: rgba(251,146,60,0.06);
+      color: #fb923c;
+    }
+    .mic-btn.recording {
+      border-color: #ef4444;
+      background: rgba(239,68,68,0.1);
+      color: #ef4444;
+      animation: micPulse 1.5s ease infinite;
+    }
+    @keyframes micPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.3); }
+      50% { box-shadow: 0 0 0 16px rgba(239,68,68,0); }
+    }
+    .mic-btn svg { width: 36px; height: 36px; }
+    .mic-btn .mic-ring {
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      transition: border-color 0.3s ease;
+    }
+    .mic-btn.recording .mic-ring {
+      border-color: rgba(239,68,68,0.15);
+    }
+    .mic-status {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+    }
+    .mic-status.recording { color: #ef4444; }
+    .mic-status.ready { color: rgba(255,255,255,0.4); }
+
+    /* Waveform visualizer */
+    .waveform-container {
+      width: 100%;
+      max-width: 400px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .waveform-container.active { opacity: 1; }
+    .waveform-bar {
+      width: 4px;
+      border-radius: 100px;
+      background: linear-gradient(180deg, #fb923c, #f97316);
+      min-height: 4px;
+      transition: height 0.1s ease;
+    }
+
+    /* Transcription display */
+    .transcription-area {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      min-height: 80px;
+      display: none;
+    }
+    .transcription-area.visible { display: block; animation: fadeSlideIn 0.4s ease forwards; }
+    .transcription-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #fb923c;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .transcription-label .live-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #ef4444;
+      display: none;
+      animation: livePulse 1s ease infinite;
+    }
+    .transcription-label .live-dot.active { display: inline-block; }
+    @keyframes livePulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    .transcription-text {
+      color: rgba(255,255,255,0.7);
+      font-size: 1rem;
+      line-height: 1.7;
+      font-style: italic;
+    }
+    .transcription-text .interim {
+      color: rgba(255,255,255,0.3);
+    }
+
+    /* Submit Answer button */
+    .submit-answer-wrapper {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    .submit-answer-btn {
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 2rem;
+      background: linear-gradient(135deg, #fb923c, #f97316);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+    .submit-answer-btn.visible { display: inline-flex; }
+    .submit-answer-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(251,146,60,0.2);
+    }
+    .submit-answer-btn:disabled { opacity: 0.5; pointer-events: none; }
+    .submit-answer-btn svg { width: 16px; height: 16px; }
+    .skip-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.5);
+      font-weight: 600;
+      font-size: 0.88rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .skip-btn:hover {
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* Evaluation Card */
+    .eval-card {
+      display: none;
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+      animation: fadeSlideIn 0.5s ease forwards;
+    }
+    .eval-card.visible { display: block; }
+
+    .eval-score-banner {
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .eval-score-left {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+    .eval-score-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #000;
+      flex-shrink: 0;
+    }
+    .eval-score-circle.score-high { background: linear-gradient(135deg, #4ade80, #22c55e); }
+    .eval-score-circle.score-mid { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+    .eval-score-circle.score-low { background: linear-gradient(135deg, #f87171, #ef4444); }
+    .eval-score-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .eval-score-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-top: 0.2rem;
+    }
+
+    .eval-body {
+      padding: 1.5rem 2rem;
+    }
+    .eval-section {
+      margin-bottom: 1.25rem;
+    }
+    .eval-section:last-child { margin-bottom: 0; }
+    .eval-section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .eval-section-title.feedback { color: #fb923c; }
+    .eval-section-title.strengths { color: #4ade80; }
+    .eval-section-title.weaknesses { color: #f87171; }
+    .eval-section-title.topics { color: #818cf8; }
+    .eval-section-title.model-answer { color: #22d3ee; }
+
+    .eval-section-text {
+      color: rgba(255,255,255,0.55);
+      font-size: 0.92rem;
+      line-height: 1.7;
+    }
+    .eval-topics-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .eval-topic-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 100px;
+      background: rgba(129,140,248,0.1);
+      border: 1px solid rgba(129,140,248,0.2);
+      color: #a5b4fc;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+    .eval-topic-tag svg { width: 12px; height: 12px; }
+
+    /* Next Question */
+    .next-question-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .next-question-btn {
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 2rem;
+      background: linear-gradient(135deg, #fb923c, #f97316);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+    .next-question-btn.visible { display: inline-flex; }
+    .next-question-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(251,146,60,0.2);
+    }
+    .next-question-btn svg { width: 16px; height: 16px; }
+
+    /* ===== Step 3: Final Results ===== */
+    .final-results {
+      display: none;
+      min-height: 100vh;
+      padding: 8rem 2rem 4rem;
+      background: #030303;
+    }
+    .final-results.visible { display: block; }
+    .final-results-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .final-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .final-header h1 {
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.75rem;
+    }
+
+    /* Overall Score Card */
+    .overall-score-card {
+      text-align: center;
+      padding: 2.5rem 2rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 20px;
+      margin-bottom: 2.5rem;
+    }
+    .overall-score-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #000;
+      margin: 0 auto 1.5rem;
+    }
+    .overall-score-circle.score-high { background: linear-gradient(135deg, #4ade80, #22c55e); }
+    .overall-score-circle.score-mid { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+    .overall-score-circle.score-low { background: linear-gradient(135deg, #f87171, #ef4444); }
+
+    .overall-stats {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    .overall-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .overall-stat-value {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .overall-stat-label {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.4);
+      font-weight: 500;
+    }
+
+    .overall-verdict {
+      font-size: 1.05rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.7;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* Topics to Focus */
+    .focus-topics-card {
+      background: rgba(129,140,248,0.04);
+      border: 1px solid rgba(129,140,248,0.12);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    .focus-topics-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #a5b4fc;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .focus-topics-title svg { width: 20px; height: 20px; }
+    .focus-topics-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    /* Per-question breakdown */
+    .breakdown-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+      animation: fadeSlideIn 0.5s ease forwards;
+      opacity: 0;
+    }
+    .breakdown-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      cursor: pointer;
+      user-select: none;
+    }
+    .breakdown-number {
+      flex-shrink: 0;
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.8rem;
+      color: #000;
+    }
+    .breakdown-number.score-high { background: linear-gradient(135deg, #4ade80, #22c55e); }
+    .breakdown-number.score-mid { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+    .breakdown-number.score-low { background: linear-gradient(135deg, #f87171, #ef4444); }
+
+    .breakdown-info { flex: 1; }
+    .breakdown-q {
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+    .breakdown-score-badge {
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .breakdown-score-badge.score-high { color: #4ade80; background: rgba(34,197,94,0.12); }
+    .breakdown-score-badge.score-mid { color: #fbbf24; background: rgba(251,191,36,0.12); }
+    .breakdown-score-badge.score-low { color: #f87171; background: rgba(239,68,68,0.12); }
+
+    .breakdown-toggle {
+      flex-shrink: 0;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,0.4);
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+    .breakdown-card.open .breakdown-toggle {
+      transform: rotate(180deg);
+      background: rgba(251,146,60,0.1);
+      color: #fb923c;
+    }
+    .breakdown-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+    .breakdown-card.open .breakdown-body {
+      max-height: 800px;
+    }
+    .breakdown-body-inner {
+      padding: 0 1.5rem 1.5rem;
+      padding-left: calc(1.5rem + 32px + 1rem);
+    }
+    .breakdown-detail-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.3rem;
+      margin-top: 0.75rem;
+    }
+    .breakdown-detail-label.your-answer { color: #fb923c; }
+    .breakdown-detail-label.feedback { color: #818cf8; }
+    .breakdown-detail-text {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.9rem;
+      line-height: 1.65;
+    }
+
+    /* Results actions */
+    .final-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+    }
+    .final-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.8rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+    .final-btn:hover { transform: translateY(-1px); }
+    .final-btn-primary {
+      background: linear-gradient(135deg, #fb923c, #f97316);
+      color: #000;
+    }
+    .final-btn-secondary {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #fff;
+    }
+    .final-btn-secondary:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* ===== Loading Overlay ===== */
+    .loading-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(3,3,3,0.92);
+      z-index: 9999;
+      flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 2rem;
+    }
+    .loading-overlay.visible { display: flex; }
+    .loading-spinner {
+      width: 48px; height: 48px;
+      border: 3px solid rgba(255,255,255,0.08);
+      border-top-color: #fb923c;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { color: rgba(255,255,255,0.6); font-size: 1.05rem; font-weight: 500; }
+    .loading-subtext { color: rgba(255,255,255,0.3); font-size: 0.85rem; margin-top: -1rem; }
+
+    /* Error toast */
+    .error-toast {
+      display: none; position: fixed;
+      bottom: 2rem; left: 50%; transform: translateX(-50%);
+      background: #1c1c1c; border: 1px solid rgba(239,68,68,0.3);
+      color: #f87171; padding: 1rem 1.5rem; border-radius: 10px;
+      font-size: 0.9rem; z-index: 10000;
+      max-width: 90%; text-align: center;
+      animation: toastIn 0.4s ease forwards;
+    }
+    .error-toast.visible { display: block; }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    /* Browser not supported */
+    .browser-warning {
+      display: none;
+      text-align: center;
+      padding: 2rem;
+      background: rgba(239,68,68,0.06);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 14px;
+      margin: 2rem 0;
+    }
+    .browser-warning.visible { display: block; }
+    .browser-warning h3 {
+      color: #f87171;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+    .browser-warning p {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.9rem;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .oral-section, .viva-session, .final-results { padding: 7rem 1.25rem 3rem; }
+      .oral-upload-zone-inner { padding: 2rem 1.25rem; }
+      .file-card-top { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+      .file-card-name { max-width: 100%; }
+      .eval-score-banner { flex-direction: column; text-align: center; gap: 1rem; }
+      .eval-body { padding: 1.25rem; }
+      .breakdown-body-inner { padding-left: 1.25rem; }
+      .overall-score-circle { width: 90px; height: 90px; font-size: 2rem; }
+    }
+  </style>
+</head>
+
+<body class="page_oral-viva">
+<div class="page-wrapper overflow-hidden">
+
+  <div class="global-styles w-embed"><style>
+    @media screen and (max-width:1440px) { html { font-size: calc(0.8126951092611863rem + 0.20811654526534862vw); } }
+    @media screen and (max-width:479px) { html { font-size: calc(0.7494769874476988rem + 0.8368200836820083vw); } }
+    body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+    .container-medium,.container-small, .container-large { margin-right: auto !important; margin-left: auto !important; }
+    a, .w-input, .w-select, .w-tab-link, .w-nav-link, .w-dropdown-btn, .w-dropdown-toggle, .w-dropdown-link { color: inherit; text-decoration: inherit; }
+    .pointer-events-off { pointer-events: none; }
+    .hide { display: none !important; }
+  </style></div>
+
+  <!-- NAVBAR -->
+  <div data-animation="default" data-collapse="medium" data-duration="400" data-easing="ease" data-easing2="ease"
+    role="banner" class="navbar w-nav">
+    <div class="container-large is-navbar is-main">
+      <a id="w-node-_2b352b37-e08d-fc9b-1c10-e6fbd4873282-d4873280" href="/"
+        class="brand is-navbar w-nav-brand">
+        <div class="navbar_brand-svg w-embed">
+          <div style="display: inline-flex; align-items: center;">
+            <img src="images/1-modified.png" loading="lazy" alt="Leo Logo" style="height: 38px; width: auto;">
+            <span style="margin-left: 12px; font-weight: 700; font-size: 28px; color: white; line-height: 1; font-family: Inter, sans-serif; letter-spacing: -0.5px;">Leo</span>
+          </div>
+        </div>
+      </a>
+
+      <nav role="navigation" id="w-node-_2b352b37-e08d-fc9b-1c10-e6fbd4873284-d4873280" class="nav-menu w-nav-menu">
+        <div class="mobile_menu">
+          <div mirror="menu" class="close_menu is-rel w-embed">
+            <svg class="image_contain" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="20" cy="20" r="19.5" stroke="black" />
+              <line x1="13.6464" y1="25.6464" x2="25.6464" y2="13.6464" stroke="black" />
+              <line x1="14.3536" y1="13.6464" x2="26.3536" y2="25.6464" stroke="black" />
+            </svg>
+          </div>
+          <a href="/" class="nav-link is-first w-inline-block">
+            <div><div class="nav-link_heading">Home</div></div>
+          </a>
+          <a href="/about-us" class="nav-link w-inline-block">
+            <div><div class="nav-link_heading">About Us</div></div>
+          </a>
+          <a href="/upload" class="nav-link w-inline-block">
+            <div><div class="nav-link_heading">Upload</div></div>
+          </a>
+          <a href="how-it-works.html" class="nav-link is-last w-inline-block">
+            <div><div class="nav-link_heading">How It Works</div></div>
+          </a>
+          <div reflection="menu" class="menu-button w-nav-button"><div>Menu</div></div>
+          <a href="/upload" class="button is-navbar w-inline-block">
+            <div>Get Started</div><div class="button_hover"></div>
+          </a>
+        </div>
+      </nav>
+
+      <div reflection="menu" class="menu-button w-nav-button"><div>Menu</div></div>
+      <a id="w-node-_30ba1d37-df34-c42b-ca69-d5db152da274-d4873280" href="/upload"
+        class="button is-navbar w-inline-block">
+        <div>Get Started</div>
+        <div class="button_hover"></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- STEP 1: Upload for Oral Viva -->
+  <section class="oral-section" id="oralUploadSection">
+    <div class="oral-ambient"></div>
+    <div class="oral-container">
+      <div class="oral-header">
+        <div class="pill-item">
+          <div class="pill-item-inner">Oral Viva Practice</div>
+        </div>
+        <h1>Speak your <span class="span_gradient" style="background: linear-gradient(135deg, #fb923c, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">answers</span></h1>
+        <p>Upload your lab manual, and our AI will quiz you with viva questions. Speak your answers and get evaluated in real time.</p>
+      </div>
+
+      <!-- Browser warning -->
+      <div class="browser-warning" id="browserWarning">
+        <h3>🎤 Speech Recognition Not Supported</h3>
+        <p>Your browser doesn't support the Web Speech API. Please use Google Chrome or Microsoft Edge for the best experience.</p>
+      </div>
+
+      <!-- File Upload Zone -->
+      <div class="oral-upload-zone" id="oralUploadZone">
+        <div class="grid-pattern-wrapper">
+          <div class="grid-pattern" id="gridPattern"></div>
+        </div>
+        <div class="oral-upload-zone-inner">
+          <input type="file" id="oralFileInput" class="file-input-hidden" accept=".pdf,.doc,.docx,.txt,.md" />
+          <div class="upload-content">
+            <p class="upload-title">Upload lab manual</p>
+            <p class="upload-subtitle">Drop your file here or click to upload</p>
+
+            <div class="upload-icon-area" id="oralUploadIconArea">
+              <div class="upload-icon-box">
+                <div class="drop-text">
+                  Drop it
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </div>
+                <div class="upload-icon-only">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                </div>
+              </div>
+              <div class="upload-dashed-box"></div>
+            </div>
+
+            <div id="oralFileCardContainer"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Supported Formats -->
+      <div class="upload-formats" id="oralFormatBadges">
+        <div class="format-badge">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          PDF
+        </div>
+        <div class="format-badge">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          DOCX
+        </div>
+        <div class="format-badge">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          TXT
+        </div>
+      </div>
+
+      <!-- Question Count Selector -->
+      <div class="question-selector" id="oralQuestionSelector">
+        <div class="question-selector-label">How many viva questions?</div>
+        <div class="question-options" id="oralQuestionOptions">
+          <div class="question-option" data-count="5">5</div>
+          <div class="question-option selected" data-count="10">10</div>
+          <div class="question-option" data-count="15">15</div>
+          <div class="question-option" data-count="20">20</div>
+        </div>
+      </div>
+
+      <!-- Custom Prompt Selector -->
+      <div class="custom-prompt-selector" id="oralCustomPromptSelector">
+        <div class="question-selector-label">Any specific focus? (Optional)</div>
+        <textarea id="oralCustomPromptInput" class="custom-prompt-textarea" placeholder="e.g. Focus only on Chapter 5 questions, or cover the ethical implications..."></textarea>
+      </div>
+
+      <!-- Start Button -->
+      <div class="start-viva-wrapper">
+        <button class="start-viva-btn" id="startVivaBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          Start Oral Viva
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 2: Viva Session -->
+  <section class="viva-session" id="vivaSession">
+    <div class="oral-ambient"></div>
+    <div class="viva-session-container">
+      <!-- Progress -->
+      <div class="viva-progress">
+        <div class="viva-progress-bar-outer">
+          <div class="viva-progress-bar-inner" id="vivaProgressBar"></div>
+        </div>
+        <div class="viva-progress-text" id="vivaProgressText">1 / 10</div>
+      </div>
+
+      <!-- Question -->
+      <div class="viva-question-display" id="vivaQuestionDisplay">
+        <div class="viva-question-label">Question</div>
+        <div class="viva-question-text" id="vivaQuestionText">Loading question...</div>
+        <div class="viva-difficulty" id="vivaDifficulty"></div>
+      </div>
+
+      <!-- Microphone -->
+      <div class="mic-area">
+        <button class="mic-btn" id="micBtn">
+          <div class="mic-ring"></div>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="micIcon">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+        </button>
+        <div class="mic-status ready" id="micStatus">Click the mic to start speaking</div>
+        <div class="waveform-container" id="waveformContainer"></div>
+      </div>
+
+      <!-- Transcription -->
+      <div class="transcription-area" id="transcriptionArea">
+        <div class="transcription-label">
+          <span class="live-dot" id="liveDot"></span>
+          Your Answer
+        </div>
+        <div class="transcription-text" id="transcriptionText"></div>
+      </div>
+
+      <!-- Submit / Skip -->
+      <div class="submit-answer-wrapper">
+        <button class="submit-answer-btn" id="submitAnswerBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
+          Submit Answer
+        </button>
+        <button class="skip-btn" id="skipBtn">
+          Skip →
+        </button>
+      </div>
+
+      <!-- Evaluation -->
+      <div class="eval-card" id="evalCard">
+        <div class="eval-score-banner">
+          <div class="eval-score-left">
+            <div class="eval-score-circle" id="evalScoreCircle">—</div>
+            <div>
+              <div class="eval-score-label">Score</div>
+              <div class="eval-score-title" id="evalScoreTitle">Evaluating...</div>
+            </div>
+          </div>
+        </div>
+        <div class="eval-body" id="evalBody"></div>
+      </div>
+
+      <!-- Next Question -->
+      <div class="next-question-wrapper">
+        <button class="next-question-btn" id="nextQuestionBtn">
+          Next Question
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 3: Final Results -->
+  <section class="final-results" id="finalResults">
+    <div class="oral-ambient"></div>
+    <div class="final-results-container">
+      <div class="final-header">
+        <div class="pill-item" style="display:inline-flex; margin-bottom:1rem;">
+          <div class="pill-item-inner">Viva Complete</div>
+        </div>
+        <h1>Your <span class="span_gradient" style="background: linear-gradient(135deg, #fb923c, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">performance</span> report</h1>
+      </div>
+
+      <!-- Overall Score -->
+      <div class="overall-score-card" id="overallScoreCard">
+        <div class="overall-score-circle" id="overallScoreCircle">—</div>
+        <div class="overall-stats" id="overallStats"></div>
+        <div class="overall-verdict" id="overallVerdict"></div>
+      </div>
+
+      <!-- Focus Topics -->
+      <div class="focus-topics-card" id="focusTopicsCard" style="display:none;">
+        <div class="focus-topics-title">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Topics to Focus On
+        </div>
+        <div class="focus-topics-grid" id="focusTopicsGrid"></div>
+      </div>
+
+      <!-- Question Breakdown -->
+      <div id="breakdownContainer"></div>
+
+      <!-- Actions -->
+      <div class="final-actions">
+        <button class="final-btn final-btn-primary" onclick="window.location.reload()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Try Again
+        </button>
+        <a href="/upload" class="final-btn final-btn-secondary">
+          ← Back to Upload
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOADING OVERLAY -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loadingText">Generating your viva questions...</div>
+    <div class="loading-subtext" id="loadingSubtext">This usually takes 10–20 seconds</div>
+  </div>
+
+  <!-- ERROR TOAST -->
+  <div class="error-toast" id="errorToast"></div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container-medium">
+      <div class="footer_grid">
+        <div class="footer_brand-block">
+          <a aria-label="Leo" href="index.html" class="w-inline-block">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <img src="images/1-modified.png" alt="Leo Logo" style="height: 38px; width: auto; object-fit: contain;">
+              <span style="font-family: inherit; font-size: 24px; font-weight: 700; color: white; letter-spacing: -0.02em;">Leo</span>
+            </div>
+          </a>
+          <div class="footer_slogan">Your viva,<br/>prepared <span class="span_gradient">smarter</span></div>
+        </div>
+        <ul role="list" class="w-list-unstyled">
+          <li><div class="footer_heading">Company</div></li>
+          <li><span class="footer_link" style="pointer-events:none; cursor:default;">Home</span></li>
+          <li><span class="footer_link" style="pointer-events:none; cursor:default;">About Us</span></li>
+        </ul>
+        <ul role="list" class="w-list-unstyled">
+          <li><div class="footer_heading">Product</div></li>
+          <li><span class="footer_link" style="pointer-events:none; cursor:default;">Upload Manual</span></li>
+          <li><span class="footer_link" style="pointer-events:none; cursor:default;">How It Works</span></li>
+        </ul>
+        <ul role="list" class="w-list-unstyled">
+          <li><div class="footer_heading">Contact</div></li>
+          <li><span class="footer_link" style="pointer-events:none; cursor:default;">hello@vivaready.ai</span></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script src="js/jquery.js?site=6501f1891917bde75ab542ee" type="text/javascript"></script>
+<script src="js/phunk-creative.schunk.36b8fb49256177c8.js" type="text/javascript"></script>
+<script src="js/phunk-creative.schunk.bee9c3d489e645dc.js" type="text/javascript"></script>
+<script src="js/phunk-creative.08be3e44.fd69bfb30f485b8a.js" type="text/javascript"></script>
+
+<script>
+// Set PDF.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+document.addEventListener('DOMContentLoaded', function() {
+
+  // ===== Generate grid =====
+  const gridPattern = document.getElementById('gridPattern');
+  for (let i = 0; i < 451; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'grid-cell ' + (i % 2 === 0 ? 'grid-cell-even' : 'grid-cell-odd');
+    gridPattern.appendChild(cell);
+  }
+
+  // ===== Generate waveform bars =====
+  const waveformContainer = document.getElementById('waveformContainer');
+  const NUM_BARS = 40;
+  for (let i = 0; i < NUM_BARS; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'waveform-bar';
+    bar.style.height = '4px';
+    waveformContainer.appendChild(bar);
+  }
+
+  // ===== Check Speech API =====
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    document.getElementById('browserWarning').classList.add('visible');
+  }
+
+  // ===== State =====
+  let uploadedFile = null;
+  let extractedText = '';
+  let selectedCount = 10;
+  let vivaQuestions = [];
+  let currentQuestionIndex = 0;
+  let isRecording = false;
+  let recognition = null;
+  let finalTranscript = '';
+  let interimTranscript = '';
+  let audioContext = null;
+  let analyser = null;
+  let animFrameId = null;
+  let microphone = null;
+
+  // Results storage
+  let results = []; // { question, answer, studentAnswer, score, feedback, strengths, weaknesses, topicsToFocus, modelAnswer }
+
+  // ===== DOM Elements =====
+  const oralUploadSection = document.getElementById('oralUploadSection');
+  const vivaSession = document.getElementById('vivaSession');
+  const finalResultsSection = document.getElementById('finalResults');
+  const uploadZone = document.getElementById('oralUploadZone');
+  const fileInput = document.getElementById('oralFileInput');
+  const fileCardContainer = document.getElementById('oralFileCardContainer');
+  const uploadIconArea = document.getElementById('oralUploadIconArea');
+  const formatBadges = document.getElementById('oralFormatBadges');
+  const questionSelector = document.getElementById('oralQuestionSelector');
+  const customPromptSelector = document.getElementById('oralCustomPromptSelector');
+  const customPromptInput = document.getElementById('oralCustomPromptInput');
+  const startVivaBtn = document.getElementById('startVivaBtn');
+  const loadingOverlay = document.getElementById('loadingOverlay');
+  const errorToast = document.getElementById('errorToast');
+
+  const micBtn = document.getElementById('micBtn');
+  const micStatus = document.getElementById('micStatus');
+  const transcriptionArea = document.getElementById('transcriptionArea');
+  const transcriptionText = document.getElementById('transcriptionText');
+  const liveDot = document.getElementById('liveDot');
+  const submitAnswerBtn = document.getElementById('submitAnswerBtn');
+  const skipBtn = document.getElementById('skipBtn');
+  const evalCard = document.getElementById('evalCard');
+  const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+
+  // ===== Upload Handlers =====
+  uploadZone.addEventListener('click', function(e) {
+    if (uploadedFile || e.target.closest('.file-card-remove')) return;
+    fileInput.click();
+  });
+
+  fileInput.addEventListener('change', function(e) {
+    if (e.target.files.length > 0) handleFile(e.target.files[0]);
+  });
+
+  uploadZone.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    if (!uploadedFile) uploadZone.classList.add('drag-active');
+  });
+  uploadZone.addEventListener('dragleave', function(e) {
+    e.preventDefault();
+    uploadZone.classList.remove('drag-active');
+  });
+  uploadZone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    uploadZone.classList.remove('drag-active');
+    if (!uploadedFile && e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+  });
+
+  // Question count
+  document.querySelectorAll('#oralQuestionOptions .question-option').forEach(function(opt) {
+    opt.addEventListener('click', function() {
+      document.querySelectorAll('#oralQuestionOptions .question-option').forEach(function(o) { o.classList.remove('selected'); });
+      opt.classList.add('selected');
+      selectedCount = parseInt(opt.dataset.count);
+    });
+  });
+
+  // Start Viva
+  startVivaBtn.addEventListener('click', startOralViva);
+
+  // ===== File handling =====
+  async function handleFile(file) {
+    const ext = file.name.split('.').pop().toLowerCase();
+    const validExts = ['pdf', 'doc', 'docx', 'txt', 'md'];
+    if (!validExts.includes(ext)) {
+      showError('Please upload a PDF, DOCX, or TXT file.');
+      return;
+    }
+
+    uploadedFile = file;
+    uploadZone.classList.add('has-file');
+    uploadIconArea.style.display = 'none';
+    formatBadges.style.display = 'none';
+
+    const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+    fileCardContainer.innerHTML = `
+      <div class="file-card">
+        <button class="file-card-remove" onclick="window.removeOralFile()" title="Remove file">✕</button>
+        <div class="file-card-top">
+          <div class="file-card-name">${escapeHtml(file.name)}</div>
+          <div class="file-card-size">${sizeMB} MB</div>
+        </div>
+        <div class="file-card-bottom">
+          <div class="file-card-type">${ext.toUpperCase()}</div>
+          <div class="file-card-modified">modified ${new Date(file.lastModified).toLocaleDateString()}</div>
+        </div>
+      </div>
+    `;
+
+    questionSelector.classList.add('visible');
+    customPromptSelector.classList.add('visible');
+    startVivaBtn.classList.add('visible');
+
+    try {
+      extractedText = await extractText(file, ext);
+      if (!extractedText || extractedText.trim().length < 50) {
+        showError('Could not extract enough text from this file. Please try a different file.');
+        window.removeOralFile();
+      }
+    } catch (err) {
+      console.error('Text extraction error:', err);
+      showError('Failed to read file. Please try a different format.');
+      window.removeOralFile();
+    }
+  }
+
+  window.removeOralFile = function() {
+    uploadedFile = null;
+    extractedText = '';
+    fileCardContainer.innerHTML = '';
+    uploadZone.classList.remove('has-file');
+    uploadIconArea.style.display = '';
+    formatBadges.style.display = '';
+    questionSelector.classList.remove('visible');
+    customPromptSelector.classList.remove('visible');
+    customPromptInput.value = '';
+    startVivaBtn.classList.remove('visible');
+    fileInput.value = '';
+  };
+
+  // ===== Text extraction =====
+  async function extractText(file, ext) {
+    if (ext === 'txt' || ext === 'md') return await file.text();
+    if (ext === 'pdf') return await extractPdfText(file);
+    if (ext === 'docx' || ext === 'doc') return await extractDocxText(file);
+    return '';
+  }
+
+  async function extractPdfText(file) {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let text = '';
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      text += content.items.map(function(item) { return item.str; }).join(' ') + '\n\n';
+    }
+    return text;
+  }
+
+  async function extractDocxText(file) {
+    const arrayBuffer = await file.arrayBuffer();
+    const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
+    return result.value;
+  }
+
+  // ===== Start Oral Viva =====
+  async function startOralViva() {
+    if (!extractedText) {
+      showError('No text extracted. Please re-upload your file.');
+      return;
+    }
+
+    document.getElementById('loadingText').textContent = 'Generating your viva questions...';
+    document.getElementById('loadingSubtext').textContent = 'This usually takes 10–20 seconds';
+    loadingOverlay.classList.add('visible');
+    startVivaBtn.disabled = true;
+
+    try {
+      const response = await fetch('/api/generate-questions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: extractedText,
+          questionCount: selectedCount,
+          customPrompt: customPromptInput.value.trim()
+        })
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Server error');
+
+      if (data.success && data.questions) {
+        vivaQuestions = data.questions;
+        currentQuestionIndex = 0;
+        results = [];
+        startVivaSession();
+      } else {
+        throw new Error('Invalid response from server');
+      }
+    } catch (err) {
+      console.error('API error:', err);
+      showError(err.message || 'Failed to generate questions. Please try again.');
+    } finally {
+      loadingOverlay.classList.remove('visible');
+      startVivaBtn.disabled = false;
+    }
+  }
+
+  // ===== Viva Session =====
+  function startVivaSession() {
+    oralUploadSection.style.display = 'none';
+    vivaSession.classList.add('visible');
+    loadQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function loadQuestion() {
+    const q = vivaQuestions[currentQuestionIndex];
+    const total = vivaQuestions.length;
+
+    // Update progress
+    const pct = ((currentQuestionIndex) / total) * 100;
+    document.getElementById('vivaProgressBar').style.width = pct + '%';
+    document.getElementById('vivaProgressText').textContent = (currentQuestionIndex + 1) + ' / ' + total;
+
+    // Show question
+    document.getElementById('vivaQuestionText').textContent = q.question;
+    const diffEl = document.getElementById('vivaDifficulty');
+    diffEl.textContent = q.difficulty || 'medium';
+    diffEl.className = 'viva-difficulty ' + (q.difficulty || 'medium');
+
+    // Reset UI
+    finalTranscript = '';
+    interimTranscript = '';
+    transcriptionText.innerHTML = '';
+    transcriptionArea.classList.remove('visible');
+    submitAnswerBtn.classList.remove('visible');
+    evalCard.classList.remove('visible');
+    nextQuestionBtn.classList.remove('visible');
+    micStatus.textContent = 'Click the mic to start speaking';
+    micStatus.className = 'mic-status ready';
+    micBtn.classList.remove('recording');
+    waveformContainer.classList.remove('active');
+    liveDot.classList.remove('active');
+    skipBtn.style.display = '';
+  }
+
+  // ===== Microphone / Speech Recognition =====
+  micBtn.addEventListener('click', function() {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      startRecording();
+    }
+  });
+
+  function startRecording() {
+    if (!SpeechRecognition) {
+      showError('Speech recognition is not supported in your browser.');
+      return;
+    }
+
+    recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = true;
+    recognition.continuous = true;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = function() {
+      isRecording = true;
+      micBtn.classList.add('recording');
+      micStatus.textContent = 'Listening... Speak your answer';
+      micStatus.className = 'mic-status recording';
+      transcriptionArea.classList.add('visible');
+      liveDot.classList.add('active');
+      waveformContainer.classList.add('active');
+      startAudioVisualizer();
+    };
+
+    recognition.onresult = function(event) {
+      interimTranscript = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript + ' ';
+        } else {
+          interimTranscript += event.results[i][0].transcript;
+        }
+      }
+      transcriptionText.innerHTML = escapeHtml(finalTranscript) +
+        (interimTranscript ? '<span class="interim">' + escapeHtml(interimTranscript) + '</span>' : '');
+
+      if (finalTranscript.trim().length > 0) {
+        submitAnswerBtn.classList.add('visible');
+      }
+    };
+
+    recognition.onerror = function(event) {
+      console.error('Speech recognition error:', event.error);
+      if (event.error === 'not-allowed') {
+        showError('Microphone access denied. Please allow microphone access in your browser settings.');
+      } else if (event.error !== 'aborted') {
+        showError('Speech recognition error: ' + event.error);
+      }
+      stopRecording();
+    };
+
+    recognition.onend = function() {
+      if (isRecording) {
+        // Auto-restart if we're still in recording mode (browser might end it)
+        try { recognition.start(); } catch(e) { stopRecording(); }
+      }
+    };
+
+    try {
+      recognition.start();
+    } catch(e) {
+      showError('Could not start speech recognition. Please try again.');
+    }
+  }
+
+  function stopRecording() {
+    isRecording = false;
+    micBtn.classList.remove('recording');
+    micStatus.textContent = finalTranscript.trim() ? 'Recording stopped. Submit your answer or record more.' : 'Click the mic to try again';
+    micStatus.className = 'mic-status ready';
+    liveDot.classList.remove('active');
+    waveformContainer.classList.remove('active');
+    stopAudioVisualizer();
+
+    if (recognition) {
+      try { recognition.stop(); } catch(e) {}
+    }
+
+    if (finalTranscript.trim().length > 0) {
+      submitAnswerBtn.classList.add('visible');
+    }
+  }
+
+  // ===== Audio Visualizer =====
+  function startAudioVisualizer() {
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioContext.createAnalyser();
+      microphone = audioContext.createMediaStreamSource(stream);
+      microphone.connect(analyser);
+      analyser.fftSize = 128;
+      animateWaveform();
+    }).catch(function(err) {
+      console.warn('Audio visualizer failed:', err);
+    });
+  }
+
+  function animateWaveform() {
+    if (!analyser) return;
+    const bars = waveformContainer.querySelectorAll('.waveform-bar');
+    const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+    function draw() {
+      if (!isRecording) return;
+      analyser.getByteFrequencyData(dataArray);
+      const step = Math.floor(dataArray.length / bars.length);
+      bars.forEach(function(bar, i) {
+        const val = dataArray[i * step] || 0;
+        const height = Math.max(4, (val / 255) * 50);
+        bar.style.height = height + 'px';
+      });
+      animFrameId = requestAnimationFrame(draw);
+    }
+    draw();
+  }
+
+  function stopAudioVisualizer() {
+    if (animFrameId) cancelAnimationFrame(animFrameId);
+    if (audioContext) { audioContext.close().catch(function(){}); audioContext = null; }
+    analyser = null;
+    microphone = null;
+
+    // Reset bars
+    const bars = waveformContainer.querySelectorAll('.waveform-bar');
+    bars.forEach(function(bar) { bar.style.height = '4px'; });
+  }
+
+  // ===== Submit Answer =====
+  submitAnswerBtn.addEventListener('click', function() {
+    if (isRecording) stopRecording();
+    submitStudentAnswer(finalTranscript.trim());
+  });
+
+  skipBtn.addEventListener('click', function() {
+    if (isRecording) stopRecording();
+    // Record skip
+    const q = vivaQuestions[currentQuestionIndex];
+    results.push({
+      question: q.question,
+      answer: q.answer,
+      difficulty: q.difficulty,
+      studentAnswer: '(Skipped)',
+      score: 0,
+      feedback: 'This question was skipped.',
+      strengths: '',
+      weaknesses: 'The question was not attempted.',
+      topicsToFocus: [],
+      modelAnswer: q.answer
+    });
+    goToNextQuestion();
+  });
+
+  async function submitStudentAnswer(studentAnswer) {
+    if (!studentAnswer) {
+      showError('Please speak your answer first.');
+      return;
+    }
+
+    const q = vivaQuestions[currentQuestionIndex];
+
+    // Show loader state
+    submitAnswerBtn.disabled = true;
+    skipBtn.style.display = 'none';
+    document.getElementById('loadingText').textContent = 'Evaluating your answer...';
+    document.getElementById('loadingSubtext').textContent = 'AI is analyzing your response';
+    loadingOverlay.classList.add('visible');
+
+    try {
+      const response = await fetch('/api/evaluate-viva', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question: q.question,
+          modelAnswer: q.answer,
+          studentAnswer: studentAnswer,
+          difficulty: q.difficulty || 'medium'
+        })
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Evaluation failed');
+
+      if (data.success) {
+        const evalResult = {
+          question: q.question,
+          answer: q.answer,
+          difficulty: q.difficulty,
+          studentAnswer: studentAnswer,
+          score: data.evaluation.score,
+          feedback: data.evaluation.feedback,
+          strengths: data.evaluation.strengths,
+          weaknesses: data.evaluation.weaknesses,
+          topicsToFocus: data.evaluation.topicsToFocus || [],
+          modelAnswer: q.answer
+        };
+        results.push(evalResult);
+        showEvaluation(evalResult);
+      } else {
+        throw new Error('Invalid evaluation response');
+      }
+    } catch (err) {
+      console.error('Evaluation error:', err);
+      showError(err.message || 'Failed to evaluate answer. Please try again.');
+      submitAnswerBtn.disabled = false;
+      skipBtn.style.display = '';
+    } finally {
+      loadingOverlay.classList.remove('visible');
+    }
+  }
+
+  function showEvaluation(evalResult) {
+    const scoreClass = evalResult.score >= 7 ? 'score-high' : (evalResult.score >= 4 ? 'score-mid' : 'score-low');
+    const scoreTitle = evalResult.score >= 7 ? 'Excellent!' : (evalResult.score >= 4 ? 'Good Effort' : 'Needs Improvement');
+
+    document.getElementById('evalScoreCircle').textContent = evalResult.score + '/10';
+    document.getElementById('evalScoreCircle').className = 'eval-score-circle ' + scoreClass;
+    document.getElementById('evalScoreTitle').textContent = scoreTitle;
+
+    let bodyHTML = '';
+
+    if (evalResult.feedback) {
+      bodyHTML += `
+        <div class="eval-section">
+          <div class="eval-section-title feedback">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Feedback
+          </div>
+          <div class="eval-section-text">${escapeHtml(evalResult.feedback)}</div>
+        </div>
+      `;
+    }
+
+    if (evalResult.strengths) {
+      bodyHTML += `
+        <div class="eval-section">
+          <div class="eval-section-title strengths">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Strengths
+          </div>
+          <div class="eval-section-text">${escapeHtml(evalResult.strengths)}</div>
+        </div>
+      `;
+    }
+
+    if (evalResult.weaknesses) {
+      bodyHTML += `
+        <div class="eval-section">
+          <div class="eval-section-title weaknesses">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            Areas to Improve
+          </div>
+          <div class="eval-section-text">${escapeHtml(evalResult.weaknesses)}</div>
+        </div>
+      `;
+    }
+
+    if (evalResult.topicsToFocus && evalResult.topicsToFocus.length > 0) {
+      bodyHTML += `
+        <div class="eval-section">
+          <div class="eval-section-title topics">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Topics to Focus On
+          </div>
+          <div class="eval-topics-list">
+            ${evalResult.topicsToFocus.map(function(t) {
+              return '<div class="eval-topic-tag"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' + escapeHtml(t) + '</div>';
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    bodyHTML += `
+      <div class="eval-section">
+        <div class="eval-section-title model-answer">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Model Answer
+        </div>
+        <div class="eval-section-text">${escapeHtml(evalResult.modelAnswer)}</div>
+      </div>
+    `;
+
+    document.getElementById('evalBody').innerHTML = bodyHTML;
+    evalCard.classList.add('visible');
+    nextQuestionBtn.classList.add('visible');
+    submitAnswerBtn.classList.remove('visible');
+    submitAnswerBtn.disabled = false;
+  }
+
+  // ===== Next Question =====
+  nextQuestionBtn.addEventListener('click', goToNextQuestion);
+
+  function goToNextQuestion() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex >= vivaQuestions.length) {
+      showFinalResults();
+    } else {
+      loadQuestion();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  // ===== Final Results =====
+  function showFinalResults() {
+    vivaSession.classList.remove('visible');
+    finalResultsSection.classList.add('visible');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Calculate overall score
+    const answered = results.filter(function(r) { return r.studentAnswer !== '(Skipped)'; });
+    const skipped = results.filter(function(r) { return r.studentAnswer === '(Skipped)'; });
+    const totalScore = answered.reduce(function(sum, r) { return sum + r.score; }, 0);
+    const avgScore = answered.length > 0 ? (totalScore / answered.length).toFixed(1) : 0;
+    const overallClass = avgScore >= 7 ? 'score-high' : (avgScore >= 4 ? 'score-mid' : 'score-low');
+
+    const overallCircle = document.getElementById('overallScoreCircle');
+    overallCircle.textContent = avgScore + '/10';
+    overallCircle.className = 'overall-score-circle ' + overallClass;
+
+    // Stats
+    document.getElementById('overallStats').innerHTML = `
+      <div class="overall-stat">
+        <div class="overall-stat-value">${results.length}</div>
+        <div class="overall-stat-label">Total Questions</div>
+      </div>
+      <div class="overall-stat">
+        <div class="overall-stat-value">${answered.length}</div>
+        <div class="overall-stat-label">Answered</div>
+      </div>
+      <div class="overall-stat">
+        <div class="overall-stat-value">${skipped.length}</div>
+        <div class="overall-stat-label">Skipped</div>
+      </div>
+      <div class="overall-stat">
+        <div class="overall-stat-value" style="color: ${avgScore >= 7 ? '#4ade80' : (avgScore >= 4 ? '#fbbf24' : '#f87171')}">${avgScore}</div>
+        <div class="overall-stat-label">Average Score</div>
+      </div>
+    `;
+
+    // Verdict
+    let verdict = '';
+    if (avgScore >= 8) verdict = 'Outstanding performance! You have a strong grasp of the material. Keep it up!';
+    else if (avgScore >= 6) verdict = 'Good job! You understand the core concepts well. Focus on the areas highlighted below to improve further.';
+    else if (avgScore >= 4) verdict = 'Fair attempt. You have some understanding but need to review several topics. See the focus areas below.';
+    else verdict = 'You need significant improvement. Consider revising the material thoroughly and practicing more.';
+    document.getElementById('overallVerdict').textContent = verdict;
+
+    // Collect all topics to focus
+    const allTopics = {};
+    results.forEach(function(r) {
+      if (r.topicsToFocus) {
+        r.topicsToFocus.forEach(function(t) {
+          allTopics[t] = (allTopics[t] || 0) + 1;
+        });
+      }
+    });
+
+    const topicEntries = Object.entries(allTopics).sort(function(a, b) { return b[1] - a[1]; });
+
+    if (topicEntries.length > 0) {
+      const focusCard = document.getElementById('focusTopicsCard');
+      focusCard.style.display = '';
+      document.getElementById('focusTopicsGrid').innerHTML = topicEntries.map(function(entry) {
+        return '<div class="eval-topic-tag"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' + escapeHtml(entry[0]) + (entry[1] > 1 ? ' (' + entry[1] + 'x)' : '') + '</div>';
+      }).join('');
+    }
+
+    // Per-question breakdown
+    const breakdownContainer = document.getElementById('breakdownContainer');
+    breakdownContainer.innerHTML = '<h3 style="color: #fff; font-size: 1.1rem; font-weight: 700; margin-bottom: 1.5rem; margin-top: 1rem;">Question Breakdown</h3>';
+
+    results.forEach(function(r, idx) {
+      const sc = r.score;
+      const cls = sc >= 7 ? 'score-high' : (sc >= 4 ? 'score-mid' : 'score-low');
+      const card = document.createElement('div');
+      card.className = 'breakdown-card';
+      card.style.animationDelay = (idx * 60) + 'ms';
+      card.innerHTML = `
+        <div class="breakdown-header" onclick="this.parentElement.classList.toggle('open')">
+          <div class="breakdown-number ${cls}">${idx + 1}</div>
+          <div class="breakdown-info">
+            <div class="breakdown-q">${escapeHtml(r.question)}</div>
+          </div>
+          <div class="breakdown-score-badge ${cls}">${sc}/10</div>
+          <div class="breakdown-toggle">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="breakdown-body">
+          <div class="breakdown-body-inner">
+            <div class="breakdown-detail-label your-answer">Your Answer</div>
+            <div class="breakdown-detail-text">${escapeHtml(r.studentAnswer)}</div>
+            <div class="breakdown-detail-label feedback">AI Feedback</div>
+            <div class="breakdown-detail-text">${escapeHtml(r.feedback)}</div>
+            <div class="breakdown-detail-label" style="color: #22d3ee;">Model Answer</div>
+            <div class="breakdown-detail-text">${escapeHtml(r.modelAnswer)}</div>
+          </div>
+        </div>
+      `;
+      breakdownContainer.appendChild(card);
+    });
+  }
+
+  // ===== Helpers =====
+  function showError(msg) {
+    errorToast.textContent = msg;
+    errorToast.classList.add('visible');
+    setTimeout(function() { errorToast.classList.remove('visible'); }, 5000);
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+});
+</script>
+
+</body>
+</html>

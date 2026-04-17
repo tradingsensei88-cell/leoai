@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html data-wf-page="how-it-works" data-wf-site="6501f1891917bde75ab542ee" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>How It Works | Leo — AI Viva Preparation</title>
+  <meta content="See exactly how Leo prepares you for your viva — from lab manual upload to exam-ready confidence in 4 simple steps." name="description"/>
+  <meta content="How It Works | Leo" property="og:title"/>
+  <meta content="From upload to exam-ready in 4 steps. See the AI pipeline behind Leo." property="og:description"/>
+  <meta property="og:type" content="website"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <link href="css/phunk-creative.shared.41c159b45.min.css" rel="stylesheet" type="text/css"/>
+  <link href="images/1-modified.png" rel="shortcut icon" type="image/x-icon"/>
+  <link href="images/1-modified.png" rel="apple-touch-icon"/>
+  <meta name="format-detection" content="telephone=no">
+
+  <style>
+    [data-w-id] {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    html, body { overflow-x: hidden !important; }
+    .page-wrapper { overflow-x: hidden !important; }
+
+    /* ===== HOW IT WORKS PAGE ===== */
+
+    .hiw-hero {
+      position: relative;
+      padding: 10rem 2rem 5rem;
+      text-align: center;
+      background: #030303;
+      overflow: hidden;
+    }
+
+    .hiw-hero-inner {
+      position: relative;
+      z-index: 2;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .hiw-hero h1 {
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.12;
+      margin-bottom: 1.25rem;
+    }
+
+    .hiw-hero p {
+      color: rgba(255,255,255,0.5);
+      font-size: 1.1rem;
+      line-height: 1.7;
+      max-width: 540px;
+      margin: 0 auto;
+    }
+
+    /* Ambient glow */
+    .hiw-hero::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(0,229,209,0.05) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    /* ===== ROADMAP SECTION ===== */
+
+    .roadmap-section {
+      position: relative;
+      background: #030303;
+      padding: 0 2rem 6rem;
+    }
+
+    .roadmap-container {
+      max-width: 960px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    /* Vertical timeline line */
+    .roadmap-line {
+      position: absolute;
+      left: 40px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, rgba(0,229,209,0.4) 0%, rgba(37,173,249,0.4) 50%, rgba(0,229,209,0.1) 100%);
+    }
+
+    .roadmap-line::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -4px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #00E5D1;
+      box-shadow: 0 0 20px rgba(0,229,209,0.5);
+    }
+
+    .roadmap-line::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: -4px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #25ADF9;
+      box-shadow: 0 0 20px rgba(37,173,249,0.5);
+    }
+
+    /* ===== STEP CARD ===== */
+
+    .step-card {
+      position: relative;
+      padding-left: 100px;
+      margin-bottom: 5rem;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .step-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .step-card:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Step number bubble on timeline */
+    .step-marker {
+      position: absolute;
+      left: 20px;
+      top: 0;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00E5D1, #25ADF9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: #000;
+      z-index: 2;
+      box-shadow: 0 0 30px rgba(0,229,209,0.25);
+    }
+
+    /* Card body */
+    .step-card-body {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 2.5rem;
+      transition: border-color 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .step-card:hover .step-card-body {
+      border-color: rgba(0,229,209,0.15);
+      box-shadow: 0 0 60px rgba(0,229,209,0.04);
+    }
+
+    .step-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .step-label .pill-item-inner {
+      font-size: 0.75rem;
+      padding: 0.3rem 0.7rem;
+    }
+
+    .step-card-body h2 {
+      font-size: clamp(1.4rem, 3vw, 1.9rem);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    .step-card-body p {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.95rem;
+      line-height: 1.75;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Feature chips inside step */
+    .step-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .step-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.8rem;
+      border-radius: 100px;
+      background: rgba(0,229,209,0.06);
+      border: 1px solid rgba(0,229,209,0.12);
+      color: rgba(0,229,209,0.8);
+      font-size: 0.78rem;
+      font-weight: 500;
+    }
+
+    .step-chip svg {
+      width: 13px;
+      height: 13px;
+      flex-shrink: 0;
+    }
+
+    /* Step visual / illustration */
+    .step-visual {
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      margin-top: 0.5rem;
+    }
+
+    .step-visual-inner {
+      padding: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 160px;
+    }
+
+    /* Animated icon inside visual */
+    .step-icon-lg {
+      width: 64px;
+      height: 64px;
+      color: rgba(0,229,209,0.6);
+    }
+
+    /* Connector text between steps */
+    .step-connector {
+      position: absolute;
+      left: 18px;
+      top: 52px;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Duration badge */
+    .time-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 100px;
+      background: rgba(37,173,249,0.08);
+      border: 1px solid rgba(37,173,249,0.15);
+      color: rgba(37,173,249,0.85);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .time-badge svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    /* ===== SUMMARY SECTION ===== */
+
+    .hiw-summary {
+      background: #030303;
+      padding: 4rem 2rem 6rem;
+    }
+
+    .hiw-summary-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .hiw-summary h2 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      color: #fff;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      line-height: 1.15;
+    }
+
+    .hiw-summary p {
+      color: rgba(255,255,255,0.45);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      max-width: 520px;
+      margin: 0 auto 2.5rem;
+    }
+
+    /* Stats row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 2rem 1.5rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .stat-card:hover {
+      border-color: rgba(0,229,209,0.2);
+    }
+
+    .stat-value {
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #00E5D1, #25ADF9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.4rem;
+    }
+
+    .stat-label {
+      color: rgba(255,255,255,0.45);
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    /* CTA button row */
+    .hiw-cta-row {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .hiw-btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.85rem 2.2rem;
+      background: linear-gradient(135deg, #00E5D1, #25ADF9);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    .hiw-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,229,209,0.25);
+    }
+
+    .hiw-btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.85rem 2.2rem;
+      background: transparent;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      text-decoration: none;
+      transition: border-color 0.3s ease, background 0.3s ease;
+    }
+
+    .hiw-btn-secondary:hover {
+      border-color: rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.04);
+    }
+
+    /* ===== RESPONSIVE ===== */
+
+    @media (max-width: 768px) {
+      .hiw-hero {
+        padding: 8rem 1.25rem 3.5rem;
+      }
+
+      .roadmap-line {
+        left: 20px;
+      }
+
+      .step-marker {
+        left: 0;
+        width: 40px;
+        height: 40px;
+        font-size: 0.85rem;
+      }
+
+      .step-card {
+        padding-left: 64px;
+        margin-bottom: 3.5rem;
+      }
+
+      .step-card-body {
+        padding: 1.75rem;
+      }
+
+      .stats-row {
+        grid-template-columns: 1fr;
+      }
+
+      .stat-card {
+        padding: 1.5rem 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .step-card {
+        padding-left: 56px;
+      }
+
+      .roadmap-line {
+        left: 18px;
+      }
+
+      .step-marker {
+        width: 36px;
+        height: 36px;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="page_how-it-works">
+<div class="page-wrapper overflow-hidden">
+
+  <div class="global-styles w-embed"><style>
+    @media screen and (max-width:1440px) { html { font-size: calc(0.8126951092611863rem + 0.20811654526534862vw); } }
+    @media screen and (max-width:479px) { html { font-size: calc(0.7494769874476988rem + 0.8368200836820083vw); } }
+    body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+    .container-medium,.container-small, .container-large { margin-right: auto !important; margin-left: auto !important; }
+    a, .w-input, .w-select, .w-tab-link, .w-nav-link, .w-dropdown-btn, .w-dropdown-toggle, .w-dropdown-link { color: inherit; text-decoration: inherit; }
+    .pointer-events-off { pointer-events: none; }
+    .hide { display: none !important; }
+  </style></div>
+
+      <!-- Navigation -->
+      <div data-animation="default" data-collapse="medium" data-duration="400" data-easing="ease" data-easing2="ease"
+        role="banner" class="navbar w-nav">
+        <div class="container-large is-navbar is-main">
+          <a id="w-node-_2b352b37-e08d-fc9b-1c10-e6fbd4873282-d4873280" href="/" aria-current="page"
+            class="brand is-navbar w-nav-brand w--current">
+            <div class="navbar_brand-svg w-embed">
+              <div style="display: inline-flex; align-items: center;">
+                <img src="images/1-modified.png" loading="lazy" alt="Leo Logo" style="height: 38px; width: auto;">
+                <span
+                  style="margin-left: 12px; font-weight: 700; font-size: 28px; color: white; line-height: 1; font-family: Inter, sans-serif; letter-spacing: -0.5px;">Leo</span>
+              </div>
+
+            </div>
+          </a>
+
+          <nav role="navigation" id="w-node-_2b352b37-e08d-fc9b-1c10-e6fbd4873284-d4873280" class="nav-menu w-nav-menu">
+            <div class="mobile_menu">
+              <div mirror="menu" class="close_menu is-rel w-embed">
+                <svg class="image_contain" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="20" cy="20" r="19.5" stroke="black" />
+                  <line x1="13.6464" y1="25.6464" x2="25.6464" y2="13.6464" stroke="black" />
+                  <line x1="14.3536" y1="13.6464" x2="26.3536" y2="25.6464" stroke="black" />
+                </svg>
+              </div>
+
+              <!-- Home nav link -->
+              <a href="/" aria-current="page" class="nav-link is-first w-inline-block w--current">
+                <div class="nav-svg-wrapper">
+                  <div class="nav-drodpwon_icon w-embed">
+                    <svg width="23" height="25" viewBox="0 0 23 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <g clip-path="url(#clip0_1742_3839)">
+                        <path
+                          d="M8.0379 22.7211V19.0169C8.0379 18.0727 8.81263 17.2979 9.75684 17.2979H13.2311C13.6911 17.2979 14.1268 17.4795 14.4537 17.7943C14.7805 18.109 14.9621 18.5448 14.9621 19.0048V22.709C14.9621 23.1085 15.1195 23.4837 15.3979 23.7622C15.6763 24.0406 16.0516 24.1979 16.4511 24.1979H18.8237C19.9253 24.1979 20.9905 23.7622 21.7774 22.9874C22.5642 22.2127 23 21.1595 23 20.0579V9.52637C23 8.63058 22.6005 7.79531 21.9105 7.22637L13.8363 0.822682C12.4321 -0.303107 10.4226 -0.266792 9.05474 0.907419L1.17421 7.21426C0.46 7.7711 0.0242105 8.60637 0 9.51426V20.0458C0 22.3458 1.87632 24.21 4.17632 24.1979H6.50053C7.32368 24.1979 7.98947 23.5443 8.00158 22.7211H8.0379Z"
+                          fill="url(#paint0_linear_1742_3839)" />
+                      </g>
+                      <defs>
+                        <linearGradient id="paint0_linear_1742_3839" x1="11.5" y1="0.00195312" x2="11.5" y2="24.198"
+                          gradientUnits="userSpaceOnUse">
+                          <stop stop-color="#00E5D1" />
+                          <stop offset="1" stop-color="#25ADF9" />
+                        </linearGradient>
+                        <clipPath id="clip0_1742_3839">
+                          <rect width="23" height="24.2105" fill="white" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                  </div>
+                </div>
+                <div>
+                  <div class="nav-link_heading">Home</div>
+                  <div class="nav-link_description">Your AI-powered viva preparation platform.</div>
+                </div>
+              </a>
+
+              <!-- About nav link -->
+              <a href="/about-us" class="nav-link w-inline-block">
+                <div class="nav-svg-wrapper">
+                  <div class="nav-drodpwon_icon w-embed">
+                    <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <g clip-path="url(#clip0_1742_3843)">
+                        <path
+                          d="M16.491 23H6.5205C2.622 23 0 20.263 0 16.2035V6.808C0 2.737 2.622 0 6.5205 0H16.491C20.3895 0 23 2.737 23 6.808V16.2035C23 20.263 20.3895 23 16.491 23ZM11.4885 9.752C10.9365 9.752 10.488 10.212 10.488 10.764V15.847C10.488 16.399 10.9365 16.859 11.5 16.859C12.0635 16.859 12.512 16.4105 12.512 15.847V10.764C12.512 10.2005 12.0635 9.752 11.5 9.752H11.4885ZM11.5115 6.1065C10.9595 6.1065 10.4995 6.555 10.4995 7.107C10.4995 7.659 10.948 8.119 11.5 8.119C12.052 8.119 12.512 7.6705 12.512 7.1185C12.512 6.5665 12.075 6.118 11.523 6.1065H11.5115Z"
+                          fill="url(#paint0_linear_1742_3843)" />
+                      </g>
+                      <defs>
+                        <linearGradient id="paint0_linear_1742_3843" x1="11.5" y1="0" x2="11.5" y2="23"
+                          gradientUnits="userSpaceOnUse">
+                          <stop stop-color="#00E5D1" />
+                          <stop offset="1" stop-color="#25ADF9" />
+                        </linearGradient>
+                        <clipPath id="clip0_1742_3843">
+                          <rect width="23" height="23" fill="white" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                  </div>
+                </div>
+                <div>
+                  <div class="nav-link_heading" onclick="window.location.href='file:///D:/webflow/www-phunk-co-uk/about-us.html'" style="cursor: pointer;">About Us</div>
+                  <div class="nav-link_description">Find out the research and mission behind VivaReady.</div>
+                </div>
+              </a>
+
+              <!-- Features mobile link -->
+              <a href="/services" class="nav-link hide-nav-link-on-dkestop w-inline-block">
+                <div class="nav-svg-wrapper">
+                  <div class="nav-drodpwon_icon w-embed">
+                    <svg width="23" height="24" viewBox="0 0 23 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M10.35 16.1602V19.6102C10.35 21.5076 8.79739 23.0602 6.9 23.0602H3.45C1.55261 23.0602 0 21.5076 0 19.6102V16.1602C0 14.2628 1.55261 12.7102 3.45 12.7102H6.9C8.79739 12.7102 10.35 14.2628 10.35 16.1602Z"
+                        fill="url(#paint0_linear_1847_955)" />
+                      <path
+                        d="M10.35 3.51006V6.96006C10.35 8.85745 8.79739 10.4101 6.9 10.4101H3.45C1.55261 10.4101 0 8.85745 0 6.96006V3.51006C0 1.61267 1.55261 0.0600586 3.45 0.0600586H6.9C8.79739 0.0600586 10.35 1.61267 10.35 3.51006Z"
+                        fill="url(#paint1_linear_1847_955)" />
+                      <path
+                        d="M23.0004 16.1602V19.6102C23.0004 21.5076 21.4478 23.0602 19.5504 23.0602H16.1004C14.203 23.0602 12.6504 21.5076 12.6504 19.6102V16.1602C12.6504 14.2628 14.203 12.7102 16.1004 12.7102H19.5504C21.4478 12.7102 23.0004 14.2628 23.0004 16.1602Z"
+                        fill="url(#paint2_linear_1847_955)" />
+                      <path
+                        d="M23.0001 3.51006V6.96006C23.0001 8.85745 21.4475 10.4101 19.5501 10.4101H16.1001C14.2028 10.4101 12.6501 8.85745 12.6501 6.96006V3.51006C12.6501 1.61267 14.2028 0.0600586 16.1001 0.0600586H19.5501C21.4475 0.0600586 23.0001 1.61267 23.0001 3.51006Z"
+                        fill="url(#paint3_linear_1847_955)" />
+                      <defs>
+                        <linearGradient id="paint0_linear_1847_955" x1="-0.177713" y1="13.0656" x2="11.0182"
+                          y2="23.5507" gradientUnits="userSpaceOnUse">
+                          <stop stop-color="#25ADF9" />
+                          <stop offset="1" stop-color="#00E5D1" />
+                        </linearGradient>
+                        <linearGradient id="paint1_linear_1847_955" x1="-0.177713" y1="0.415484" x2="11.0182"
+                          y2="10.9005" gradientUnits="userSpaceOnUse">
+                          <stop stop-color="#25ADF9" />
+                          <stop offset="1" stop-color="#00E5D1" />
+                        </linearGradient>
+                        <linearGradient id="paint2_linear_1847_955" x1="12.4727" y1="13.0656" x2="23.6686" y2="23.5507"
+                          gradientUnits="userSpaceOnUse">
+                          <stop stop-color="#25ADF9" />
+                          <stop offset="1" stop-color="#00E5D1" />
+                        </linearGradient>
+                        <linearGradient id="paint3_linear_1847_955" x1="12.4724" y1="0.415484" x2="23.6683" y2="10.9005"
+                          gradientUnits="userSpaceOnUse">
+                          <stop stop-color="#25ADF9" />
+                          <stop offset="1" stop-color="#00E5D1" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                  </div>
+                </div>
+                <div>
+                  <div class="nav-link_heading">Features</div>
+                  <div class="nav-link_description">Focusing on what makes VivaReady so effective.</div>
+                </div>
+              </a>
+
+              
+
+              
+
+              <!-- Resources nav link -->
+              <a href="/upload" class="nav-link w-inline-block">
+                <div class="nav-svg-wrapper">
+                  <div class="nav-drodpwon_icon w-embed">
+                    <svg width="21" height="23" viewBox="0 0 21 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <g clip-path="url(#clip0_1742_3851)">
+                        <path
+                          d="M15.165 22.9886H5.53766C2.02217 22.9886 0.000193746 20.9552 0.000193746 17.4282V5.56057C-0.0802258 4.05557 0.448246 2.58504 1.44775 1.47066C2.56213 0.459669 4.03266 -0.068803 5.53766 0.00012806H15.165C18.6805 0.00012806 20.691 2.02211 20.691 5.54908V17.4167C20.7829 18.9217 20.2659 20.4037 19.2549 21.5296C18.1406 22.5521 16.67 23.0691 15.165 22.9771V22.9886ZM5.75594 15.7968C5.44575 15.7968 5.14705 15.9577 4.98621 16.2219C4.72197 16.647 4.84835 17.1984 5.26193 17.4627C5.39979 17.5546 5.56063 17.6005 5.73296 17.6005H14.8548C15.3488 17.5431 15.7165 17.095 15.659 16.601C15.6131 16.176 15.2799 15.8543 14.8548 15.7968H5.84785ZM5.84785 10.5581C5.35384 10.5581 4.95174 10.9602 4.95174 11.4542C4.95174 11.9482 5.35384 12.3503 5.84785 12.3503H14.8548C15.3488 12.3503 15.7509 11.9482 15.7509 11.4542C15.7509 10.9602 15.3488 10.5581 14.8548 10.5581H5.84785ZM5.84785 5.35377C5.35384 5.36526 4.95174 5.76736 4.95174 6.26137C4.95174 6.75537 5.35384 7.15747 5.84785 7.15747H9.28291C9.77692 7.15747 10.179 6.75537 10.179 6.24988C10.179 5.74438 9.77692 5.35377 9.28291 5.35377H5.84785Z"
+                          fill="url(#paint0_linear_1742_3851)" />
+                      </g>
+                      <defs>
+                        <linearGradient id="paint0_linear_1742_3851" x1="10.3468" y1="-0.00585938" x2="10.3468"
+                          y2="22.9886" gradientUnits="userSpaceOnUse">
+                          <stop stop-color="#00E5D1" />
+                          <stop offset="1" stop-color="#25ADF9" />
+                        </linearGradient>
+                        <clipPath id="clip0_1742_3851">
+                          <rect width="20.7023" height="23" fill="white" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                  </div>
+                </div>
+                <div>
+                  <div class="nav-link_heading">Upload</div>
+                  
+                </div>
+              </a>
+
+              <!-- How It Works nav link -->
+              <a href="how-it-works.html" class="nav-link is-last w-inline-block">
+                <div class="nav-svg-wrapper">
+                  <div class="nav-drodpwon_icon w-embed">
+                    <svg width="31" height="19" viewBox="0 0 31 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M31 0L21.1082 19H11.8171L15.9568 11.1256H15.7711C12.3559 15.4816 7.26037 18.3492 0 19V11.2346C0 11.2346 4.64463 10.965 7.37508 8.1444H0V0.000150083H8.28879V6.69868L8.47483 6.69793L11.8619 0.000150083H18.1305V6.65621L18.3166 6.65591L21.8307 0H31Z"
+                        fill="#0047FF" />
+                    </svg>
+                  </div>
+                </div>
+                <div>
+                  <div class="nav-link_heading">How It Works</div>
+                  <div class="nav-link_description">Understand the RAG pipeline powering VivaReady.</div>
+                </div>
+              </a>
+
+              <!-- Contact mobile nav link -->
+              <a href="/contact-us" class="nav-link hide-nav-link-on-dkestop w-inline-block">
+                <div class="nav-svg-wrapper">
+                  <div class="nav-drodpwon_icon w-embed">
+                    <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <g clip-path="url(#clip0_1742_3847)">
+                        <path
+                          d="M10.9306 12.0686C15.7606 16.8986 16.8501 11.3059 19.9248 14.3807C22.8906 17.3465 24.5975 17.9396 20.8327 21.6923C20.3606 22.0675 17.3706 26.6191 6.87536 16.1238C-3.6199 5.61646 0.919573 2.62646 1.29484 2.15436C5.05957 -1.61038 5.65273 0.10857 8.60642 3.07436C11.6812 6.1491 6.10063 7.25068 10.9306 12.0686Z"
+                          fill="url(#paint0_linear_1742_3847)" />
+                      </g>
+                      <defs>
+                        <linearGradient id="paint0_linear_1742_3847" x1="11.4967" y1="-0.00292969" x2="11.4967"
+                          y2="22.9937" gradientUnits="userSpaceOnUse">
+                          <stop stop-color="#00E5D1" />
+                          <stop offset="1" stop-color="#25ADF9" />
+                        </linearGradient>
+                        <clipPath id="clip0_1742_3847">
+                          <rect width="23" height="23" fill="white" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                  </div>
+                </div>
+                <div>
+                  <div class="nav-link_heading">Contact Us</div>
+                  <div class="nav-link_description">Get in touch and start your viva preparation journey.</div>
+                </div>
+              </a>
+            </div>
+          </nav>
+
+          <div reflection="menu" class="menu-button w-nav-button">
+            <div>Menu</div>
+          </div>
+          <a id="w-node-_30ba1d37-df34-c42b-ca69-d5db152da274-d4873280" href="/upload"
+            class="button is-navbar w-inline-block">
+            <div>Get Started</div>
+            <div class="button_hover"></div>
+          </a>
+        </div>
+      </div>
+
+  <!-- HERO -->
+  <section class="hiw-hero">
+    <div class="hiw-hero-inner">
+      <div class="pill-item" style="display: inline-flex; margin-bottom: 1.5rem;">
+        <div class="pill-item-inner">How It Works</div>
+      </div>
+      <h1>From lab manual to <span class="span_gradient">exam-ready</span> in 4 steps</h1>
+      <p>Upload your document, practice with your AI examiner, close your knowledge gaps, and walk into your viva with genuine confidence.</p>
+    </div>
+  </section>
+
+  <!-- ROADMAP -->
+  <section class="roadmap-section">
+    <div class="roadmap-container">
+      <div class="roadmap-line"></div>
+
+      <!-- STEP 1 -->
+      <div class="step-card" data-step="1">
+        <div class="step-marker">01</div>
+        <div class="step-card-body">
+          <div class="step-label">
+            <div class="pill-item"><div class="pill-item-inner">Step 1</div></div>
+            <div class="time-badge">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              ~30 seconds
+            </div>
+          </div>
+          <h2>Upload your <span class="span_gradient">lab manual</span></h2>
+          <p>Drop your PDF, DOCX, or plain-text lab manual into Leo. Our RAG pipeline chunks, embeds, and indexes every page into a vector knowledge base — making the entire document searchable by meaning, not just keywords.</p>
+          <div class="step-features">
+            <div class="step-chip">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              PDF / DOCX / TXT
+            </div>
+            <div class="step-chip">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              Semantic chunking
+            </div>
+            <div class="step-chip">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Encrypted & private
+            </div>
+          </div>
+          <div class="step-visual">
+            <div class="step-visual-inner">
+              <svg class="step-icon-lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step-card" data-step="2">
+        <div class="step-marker">02</div>
+        <div class="step-card-body">
+          <div class="step-label">
+            <div class="pill-item"><div class="pill-item-inner">Step 2</div></div>
+            <div class="time-badge">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Instant
+            </div>
+          </div>
+          <h2>AI examiner begins <span class="span_gradient">questioning</span></h2>
+          <p>Your AI examiner retrieves the most relevant chunks from your indexed document and generates authentic viva-style questions — the kind a real examiner would ask. It starts broadly, then narrows in based on your material and responses.</p>
+          <div class="step-features">
+            <div class="step-chip">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Viva-style questions
+            </div>
+            <div class="step-chip">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+              Retrieval-augmented
+            </div>
+            <div class="step-chip">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              Zero hallucinations
+            </div>
+          </div>
+          <div class="step-visual">
+            <div class="step-visual-inner">
+              <svg class="step-icon-lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step-card" data-step="3">
+        <div class="step-marker">03</div>
+        <div class="step-card-body">
+          <div class="step-label">
+            <div class="pill-item"><div class="pill-item-inner">Step 3</div></div>
+            <div class="time-badge">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Continuous
+            </div>
+          </div>
+          <h2>Gaps are <span class="span_gradient">tracked & targeted</span></h2>
+          <p>Every answer you give feeds into your personal knowledge-gap map. Topics you've mastered turn green. Topics you struggled with stay red and the AI automatically increases question frequency until you answer them correctly three sessions in a row.</p>
+          <div class="step-features">
+            <div class="step-chip">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              Live gap dashboard
+            </div>
+            <div class="step-chip">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              Adaptive re-testing
+            </div>
+            <div class="step-chip">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              Full visibility
+            </div>
+          </div>
+          <div class="step-visual">
+            <div class="step-visual-inner">
+              <svg class="step-icon-lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="step-card" data-step="4">
+        <div class="step-marker">04</div>
+        <div class="step-card-body">
+          <div class="step-label">
+            <div class="pill-item"><div class="pill-item-inner">Step 4</div></div>
+            <div class="time-badge">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Exam day
+            </div>
+          </div>
+          <h2>Walk in <span class="span_gradient">exam-ready</span></h2>
+          <p>By the time your viva arrives, you've already answered every question your examiner could realistically ask — and you've proven mastery on the topics you once struggled with. No surprises. No anxiety. Just confidence backed by evidence.</p>
+          <div class="step-features">
+            <div class="step-chip">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Proven mastery
+            </div>
+            <div class="step-chip">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+              Confidence score
+            </div>
+            <div class="step-chip">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+              Zero surprises
+            </div>
+          </div>
+          <div class="step-visual">
+            <div class="step-visual-inner">
+              <svg class="step-icon-lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SUMMARY / CTA -->
+  <section class="hiw-summary">
+    <div class="hiw-summary-inner">
+      
+      </div>
+
+      <div class="hiw-cta-row">
+        <a href="upload.html" class="hiw-btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload Your Manual
+        </a>
+        <a href="about-us.html" class="hiw-btn-secondary">
+          Learn About Us →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container-medium">
+      <div class="footer_grid">
+        <div class="footer_brand-block">
+          <a aria-label="Leo" href="index.html" class="w-inline-block">
+            <div class="navbar_brand-logo-wrapper" style="display: flex; align-items: center; gap: 10px;">
+              <img src="images/1-modified.png" alt="Leo Logo" style="height: 38px; width: auto; object-fit: contain;">
+              <span style="font-family: inherit; font-size: 24px; font-weight: 700; color: white; letter-spacing: -0.02em;">Leo</span>
+            </div>
+          </a>
+          <div class="footer_slogan">Your viva,<br/>prepared <span class="span_gradient">smarter</span></div>
+          <div class="footer_privacy-text">
+            <a href="#">Privacy Policy</a> | <a href="#">Terms &amp; Conditions</a>
+          </div>
+        </div>
+
+        <ul role="list" class="w-list-unstyled">
+          <li><div class="footer_heading">Company</div></li>
+          <li><span class="footer_link" style="pointer-events:none; cursor:default;">Home</span></li>
+          <li><span class="footer_link" style="pointer-events:none; cursor:default;">About Us</span></li>
+          <li><span class="footer_link" style="pointer-events:none; cursor:default;">Contact</span></li>
+        </ul>
+
+        <ul role="list" class="w-list-unstyled">
+          <li><div class="footer_heading">Product</div></li>
+          <li><span class="footer_link" style="pointer-events:none; cursor:default;">Upload Manual</span></li>
+          <li><a href="how-it-works.html" class="footer_link" aria-current="page">How It Works</span></li>
+        </ul>
+
+        <ul role="list" class="w-list-unstyled">
+          <li>
+            <div class="footer_heading">Contact</div>
+          </li>
+          <li><span class="footer_link" style="pointer-events:none; cursor:default;">hello@vivaready.ai</span></li>
+          <li><span class="footer_link" style="pointer-events:none; cursor:default;">+44 (0)800 123 4567</span></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+</div><!-- end page-wrapper -->
+
+<script src="js/jquery.js?site=6501f1891917bde75ab542ee" type="text/javascript"></script>
+<script src="js/phunk-creative.schunk.36b8fb49256177c8.js" type="text/javascript"></script>
+<script src="js/phunk-creative.schunk.bee9c3d489e645dc.js" type="text/javascript"></script>
+<script src="js/phunk-creative.08be3e44.fd69bfb30f485b8a.js" type="text/javascript"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+  // ===== Scroll-triggered step card animations =====
+  const stepCards = document.querySelectorAll('.step-card');
+
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        // Add a staggered delay based on step number
+        const step = entry.target.getAttribute('data-step');
+        const delay = (parseInt(step) - 1) * 150;
+        setTimeout(function() {
+          entry.target.classList.add('visible');
+        }, delay);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.15,
+    rootMargin: '0px 0px -50px 0px'
+  });
+
+  stepCards.forEach(function(card) {
+    observer.observe(card);
+  });
+
+  // ===== Animated timeline progress =====
+  const roadmapLine = document.querySelector('.roadmap-line');
+  if (roadmapLine) {
+    window.addEventListener('scroll', function() {
+      const rect = roadmapLine.parentElement.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const totalHeight = rect.height;
+      const scrolled = windowHeight - rect.top;
+      const progress = Math.min(Math.max(scrolled / totalHeight, 0), 1);
+
+      roadmapLine.style.background = `linear-gradient(to bottom, 
+        rgba(0,229,209,0.5) 0%, 
+        rgba(37,173,249,0.5) ${progress * 100}%, 
+        rgba(255,255,255,0.05) ${progress * 100}%, 
+        rgba(255,255,255,0.02) 100%)`;
+    });
+  }
+});
+</script>
+
+</body>
+</html>

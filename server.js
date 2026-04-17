@@ -159,7 +159,8 @@ app.post('/api/ask-ai', async (req, res) => {
       return res.status(400).json({ error: 'Missing or invalid messages' });
     }
 
-    const apiKey = process.env.OPENROUTER_API_KEY;
+    const apiKey = (process.env.OPENROUTER_API_KEY || '').trim();
+    console.log(`[DEBUG] OPENROUTER_API_KEY length=${apiKey.length}, starts="${apiKey.substring(0,8)}", ends="${apiKey.substring(apiKey.length-4)}"`);
     if (!apiKey) {
       return res.status(500).json({ error: 'OpenRouter API key not configured.' });
     }

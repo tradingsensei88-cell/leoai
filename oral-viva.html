@@ -1862,17 +1862,43 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // ===== Audio Visualizer =====
+  let simInterval = null;
+  function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  }
+
   function startAudioVisualizer() {
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      analyser = audioContext.createAnalyser();
-      microphone = audioContext.createMediaStreamSource(stream);
-      microphone.connect(analyser);
-      analyser.fftSize = 128;
-      animateWaveform();
-    }).catch(function(err) {
-      console.warn('Audio visualizer failed:', err);
-    });
+    if (isMobileDevice()) {
+      // Mobile microphone hardware can't easily share streams between SpeechRecognition and Web Audio API
+      // So we simulate the visualizer on mobile to prevent hijacking the mic and breaking transcription
+      simulateWaveform();
+    } else {
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser();
+        microphone = audioContext.createMediaStreamSource(stream);
+        microphone.connect(analyser);
+        analyser.fftSize = 128;
+        animateWaveform();
+      }).catch(function(err) {
+        console.warn('Audio visualizer failed, falling back to simulation:', err);
+        simulateWaveform();
+      });
+    }
+  }
+
+  function simulateWaveform() {
+    const bars = waveformContainer.querySelectorAll('.waveform-bar');
+    if (simInterval) clearInterval(simInterval);
+    
+    simInterval = setInterval(() => {
+      if (!isRecording) return clearInterval(simInterval);
+      bars.forEach(function(bar) {
+        // Random height between 4px and 30px to look like speech
+        const height = Math.max(4, Math.random() * 30);
+        bar.style.height = height + 'px';
+      });
+    }, 100);
   }
 
   function animateWaveform() {
@@ -1896,6 +1922,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function stopAudioVisualizer() {
     if (animFrameId) cancelAnimationFrame(animFrameId);
+    if (simInterval) clearInterval(simInterval);
     if (audioContext) { audioContext.close().catch(function(){}); audioContext = null; }
     analyser = null;
     microphone = null;

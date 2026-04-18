@@ -239,6 +239,163 @@
       color: rgba(255,255,255,0.3);
     }
 
+    /* ===== Examiner Persona Selector ===== */
+    .persona-selector {
+      margin-top: 1.5rem;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      animation: fadeSlideIn 0.5s ease forwards;
+      width: 100%;
+    }
+    .persona-selector.visible { display: flex; }
+    .persona-options {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+      max-width: 600px;
+    }
+    .persona-option {
+      flex: 1;
+      min-width: 150px;
+      padding: 1.25rem 1rem;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      cursor: pointer;
+      transition: all 0.35s ease;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .persona-option::before {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 14px;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+    .persona-option[data-persona="strict"]::before {
+      background: linear-gradient(135deg, rgba(239,68,68,0.06), rgba(220,38,38,0.06));
+    }
+    .persona-option[data-persona="friendly"]::before {
+      background: linear-gradient(135deg, rgba(34,197,94,0.06), rgba(22,163,74,0.06));
+    }
+    .persona-option[data-persona="devils-advocate"]::before {
+      background: linear-gradient(135deg, rgba(168,85,247,0.06), rgba(139,92,246,0.06));
+    }
+    .persona-option:hover::before { opacity: 1; }
+    .persona-option:hover {
+      border-color: rgba(255,255,255,0.15);
+      transform: translateY(-3px);
+    }
+    .persona-option[data-persona="strict"]:hover {
+      border-color: rgba(239,68,68,0.3);
+      box-shadow: 0 8px 30px rgba(239,68,68,0.08);
+    }
+    .persona-option[data-persona="friendly"]:hover {
+      border-color: rgba(34,197,94,0.3);
+      box-shadow: 0 8px 30px rgba(34,197,94,0.08);
+    }
+    .persona-option[data-persona="devils-advocate"]:hover {
+      border-color: rgba(168,85,247,0.3);
+      box-shadow: 0 8px 30px rgba(168,85,247,0.08);
+    }
+    .persona-option.selected {
+      transform: translateY(-3px);
+    }
+    .persona-option.selected::before { opacity: 1; }
+    .persona-option[data-persona="strict"].selected {
+      border-color: rgba(239,68,68,0.5);
+      box-shadow: 0 8px 30px rgba(239,68,68,0.12);
+    }
+    .persona-option[data-persona="friendly"].selected {
+      border-color: rgba(34,197,94,0.5);
+      box-shadow: 0 8px 30px rgba(34,197,94,0.12);
+    }
+    .persona-option[data-persona="devils-advocate"].selected {
+      border-color: rgba(168,85,247,0.5);
+      box-shadow: 0 8px 30px rgba(168,85,247,0.12);
+    }
+    .persona-icon {
+      position: relative;
+      z-index: 1;
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+    .persona-option[data-persona="strict"] .persona-icon {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.15);
+    }
+    .persona-option[data-persona="friendly"] .persona-icon {
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.15);
+    }
+    .persona-option[data-persona="devils-advocate"] .persona-icon {
+      background: rgba(168,85,247,0.1);
+      border: 1px solid rgba(168,85,247,0.15);
+    }
+    .persona-name {
+      position: relative;
+      z-index: 1;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .persona-desc {
+      position: relative;
+      z-index: 1;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.4);
+      line-height: 1.5;
+    }
+    .persona-option.selected .persona-name {
+      color: #fff;
+    }
+    .persona-option[data-persona="strict"].selected .persona-desc { color: rgba(239,68,68,0.7); }
+    .persona-option[data-persona="friendly"].selected .persona-desc { color: rgba(34,197,94,0.7); }
+    .persona-option[data-persona="devils-advocate"].selected .persona-desc { color: rgba(168,85,247,0.7); }
+    .persona-selected-badge {
+      display: none;
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+    .persona-option.selected .persona-selected-badge {
+      display: flex;
+    }
+    .persona-option[data-persona="strict"] .persona-selected-badge { background: rgba(239,68,68,0.2); color: #f87171; }
+    .persona-option[data-persona="friendly"] .persona-selected-badge { background: rgba(34,197,94,0.2); color: #4ade80; }
+    .persona-option[data-persona="devils-advocate"] .persona-selected-badge { background: rgba(168,85,247,0.2); color: #c084fc; }
+
+    @media (max-width: 768px) {
+      .persona-options {
+        flex-direction: column;
+        align-items: center;
+      }
+      .persona-option {
+        min-width: unset;
+        width: 100%;
+        max-width: 280px;
+      }
+    }
+
     /* ===== Submit Button ===== */
     .upload-submit-wrapper { display: flex; justify-content: center; margin-top: 2rem; }
     .upload-submit-btn {
@@ -861,6 +1018,37 @@
         </div>
       </div>
 
+      <!-- Examiner Persona Selector -->
+      <div class="persona-selector" id="personaSelector">
+        <div class="question-selector-label">Choose your examiner style</div>
+        <div class="persona-options" id="personaOptions">
+          <div class="persona-option selected" data-persona="friendly">
+            <div class="persona-selected-badge">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="persona-icon">📘</div>
+            <div class="persona-name">Normal Level</div>
+            <div class="persona-desc">Encouraging feedback with helpful hints & guidance.</div>
+          </div>
+          <div class="persona-option" data-persona="strict">
+            <div class="persona-selected-badge">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="persona-icon">🔥</div>
+            <div class="persona-name">Pro Level</div>
+            <div class="persona-desc">No vague answers tolerated. Demands precision & depth.</div>
+          </div>
+          <div class="persona-option" data-persona="devils-advocate">
+            <div class="persona-selected-badge">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div class="persona-icon">👑</div>
+            <div class="persona-name">Boss Level</div>
+            <div class="persona-desc">Challenges everything. Forces deeper critical thinking.</div>
+          </div>
+        </div>
+      </div>
+
       <!-- Custom Prompt Selector -->
       <div class="custom-prompt-selector" id="customPromptSelector">
         <div class="question-selector-label">Any specific focus? (Optional)</div>
@@ -967,6 +1155,7 @@ document.addEventListener('DOMContentLoaded', function() {
   let uploadedFile = null;
   let extractedText = '';
   let selectedCount = 20;
+  let selectedPersona = 'friendly';
   let allAnswersShown = false;
 
   // Elements
@@ -976,6 +1165,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const uploadIconArea = document.getElementById('uploadIconArea');
   const questionSelector = document.getElementById('questionSelector');
   const customPromptSelector = document.getElementById('customPromptSelector');
+  const personaSelector = document.getElementById('personaSelector');
   const customPromptInput = document.getElementById('customPromptInput');
   const submitBtn = document.getElementById('submitBtn');
   const formatBadges = document.getElementById('formatBadges');
@@ -1029,6 +1219,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  // Persona select
+  document.querySelectorAll('#personaOptions .persona-option').forEach(function(opt) {
+    opt.addEventListener('click', function() {
+      document.querySelectorAll('#personaOptions .persona-option').forEach(function(o) { o.classList.remove('selected'); });
+      opt.classList.add('selected');
+      selectedPersona = opt.dataset.persona;
+    });
+  });
+
   // Submit
   submitBtn.addEventListener('click', generateQuestions);
 
@@ -1064,6 +1263,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Show question selector and prompt input
     questionSelector.classList.add('visible');
+    personaSelector.classList.add('visible');
     customPromptSelector.classList.add('visible');
     submitBtn.classList.add('visible');
 
@@ -1090,6 +1290,11 @@ document.addEventListener('DOMContentLoaded', function() {
     uploadIconArea.style.display = '';
     formatBadges.style.display = '';
     questionSelector.classList.remove('visible');
+    personaSelector.classList.remove('visible');
+    // Reset persona
+    document.querySelectorAll('#personaOptions .persona-option').forEach(function(o) { o.classList.remove('selected'); });
+    document.querySelector('#personaOptions .persona-option[data-persona="friendly"]').classList.add('selected');
+    selectedPersona = 'friendly';
     customPromptSelector.classList.remove('visible');
     customPromptInput.value = '';
     submitBtn.classList.remove('visible');
@@ -1146,7 +1351,8 @@ document.addEventListener('DOMContentLoaded', function() {
         body: JSON.stringify({
           text: extractedText,
           questionCount: selectedCount,
-          customPrompt: customPromptInput.value.trim()
+          customPrompt: customPromptInput.value.trim(),
+          examinerPersona: selectedPersona
         })
       });
 

@@ -1515,6 +1515,7 @@ document.addEventListener('DOMContentLoaded', function() {
   let recognition = null;
   let finalTranscript = '';
   let interimTranscript = '';
+  let _previousTranscript = '';
   let audioContext = null;
   let analyser = null;
   let animFrameId = null;
@@ -1757,6 +1758,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Reset UI
     finalTranscript = '';
     interimTranscript = '';
+    _previousTranscript = '';
     transcriptionText.innerHTML = '';
     transcriptionArea.classList.remove('visible');
     submitAnswerBtn.classList.remove('visible');
@@ -1793,6 +1795,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     recognition.onstart = function() {
       isRecording = true;
+      _previousTranscript = finalTranscript;
       micBtn.classList.add('recording');
       micStatus.textContent = 'Listening... Speak your answer';
       micStatus.className = 'mic-status recording';
@@ -1803,14 +1806,16 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     recognition.onresult = function(event) {
+      let currentFinal = '';
       interimTranscript = '';
-      for (let i = event.resultIndex; i < event.results.length; i++) {
+      for (let i = 0; i < event.results.length; i++) {
         if (event.results[i].isFinal) {
-          finalTranscript += event.results[i][0].transcript + ' ';
+          currentFinal += event.results[i][0].transcript + ' ';
         } else {
           interimTranscript += event.results[i][0].transcript;
         }
       }
+      finalTranscript = _previousTranscript + currentFinal;
       transcriptionText.innerHTML = escapeHtml(finalTranscript) +
         (interimTranscript ? '<span class="interim">' + escapeHtml(interimTranscript) + '</span>' : '');
 

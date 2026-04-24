@@ -697,6 +697,19 @@ document.addEventListener('DOMContentLoaded', function() {
     sendBtn.classList.toggle('active', hasContent && !isProcessing);
   }
 
+  async function readJsonResponse(response) {
+    const rawText = await response.text();
+    if (!rawText) {
+      return {};
+    }
+
+    try {
+      return JSON.parse(rawText);
+    } catch {
+      return {};
+    }
+  }
+
   // Attach images
   attachBtn.addEventListener('click', function() {
     imageInput.click();
@@ -819,13 +832,13 @@ document.addEventListener('DOMContentLoaded', function() {
         })
       });
 
-      const data = await response.json();
+      const data = await readJsonResponse(response);
 
       // Remove typing indicator
       typingEl.remove();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Server error');
+        throw new Error(data.error || data.message || 'Server error');
       }
 
       const aiContent = data.content || 'I apologize, but I was unable to generate a response.';
@@ -847,7 +860,9 @@ document.addEventListener('DOMContentLoaded', function() {
       scrollToBottom();
 
     } catch (err) {
-      typingEl.remove();
+      if (typingEl.isConnected) {
+        typingEl.remove();
+      }
       console.error('Ask AI error:', err);
 
       const errorEl = createMessageElement('ai',

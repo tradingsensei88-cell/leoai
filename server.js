@@ -22,25 +22,71 @@ app.get('/news', (req, res) => res.sendFile(path.join(__dirname, 'news.html')));
 
 app.use(express.static(path.join(__dirname)));
 
-// Initialize Groq
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+function getGroqApiKey() {
+  const apiKey = (process.env.GROQ_API_KEY || '').trim();
+  if (!apiKey || apiKey === 'your_groq_api_key_here') {
+    return '';
+  }
+  return apiKey;
+}
+
+function createGroqClient() {
+  const apiKey = getGroqApiKey();
+  return apiKey ? new Groq({ apiKey }) : null;
+}
+
+async function readJsonResponse(response) {
+  const rawText = await response.text();
+  if (!rawText) {
+    return {};
+  }
+
+  try {
+    return JSON.parse(rawText);
+  } catch {
+    return { rawText };
+  }
+}
+
+function getApiErrorMessage(payload, fallbackMessage) {
+  if (!payload || typeof payload !== 'object') {
+    return fallbackMessage;
+  }
+
+  if (typeof payload.error === 'string' && payload.error.trim()) {
+    return payload.error;
+  }
+
+  if (payload.error && typeof payload.error.message === 'string' && payload.error.message.trim()) {
+    return payload.error.message;
+  }
+
+  if (typeof payload.message === 'string' && payload.message.trim()) {
+    return payload.message;
+  }
+
+  return fallbackMessage;
+}
 
 // API endpoint to generate questions
 app.post('/api/generate-questions', async (req, res) => {
   try {
     const { text, questionCount, customPrompt, examinerPersona } = req.body;
+    const normalizedText = typeof text === 'string' ? text.trim() : '';
+    const normalizedQuestionCount = Number.parseInt(questionCount, 10);
 
-    if (!text || !questionCount) {
-      return res.status(400).json({ error: 'Missing text or questionCount' });
+    if (!normalizedText || !Number.isInteger(normalizedQuestionCount) || normalizedQuestionCount < 1 || normalizedQuestionCount > 50) {
+      return res.status(400).json({ error: 'Provide document text and a valid questionCount between 1 and 50.' });
     }
 
-    if (!process.env.GROQ_API_KEY || process.env.GROQ_API_KEY === 'your_groq_api_key_here') {
+    const groq = createGroqClient();
+    if (!groq) {
       return res.status(500).json({ error: 'Groq API key not configured. Please add your key to the .env file.' });
     }
 
     // Truncate text if too long (Groq free tier: 12K TPM limit)
     const maxChars = 6000;
-    const truncatedText = text.length > maxChars ? text.substring(0, maxChars) + '\n\n[Text truncated due to length...]' : text;
+    const truncatedText = normalizedText.length > maxChars ? normalizedText.substring(0, maxChars) + '\n\n[Text truncated due to length...]' : normalizedText;
 
     let promptInstruction = '';
     if (customPrompt && customPrompt.trim().length > 0) {
@@ -78,7 +124,7 @@ You are a friendly, encouraging examiner. Your questions should:
 - Mix difficulty fairly with slightly more easy/medium questions`;
     }
 
-    const prompt = `You are an expert viva examiner. Based on the following lab manual/document text, generate exactly ${questionCount} viva-style questions that a real examiner would ask a student.${personaInstruction}${promptInstruction}
+    const prompt = `You are an expert viva examiner. Based on the following lab manual/document text, generate exactly ${normalizedQuestionCount} viva-style questions that a real examiner would ask a student.${personaInstruction}${promptInstruction}
 
 For each question, also provide a detailed model answer that demonstrates strong understanding.
 
@@ -122,7 +168,7 @@ Here is the document text:
 ${truncatedText}
 ---
 
-Generate exactly ${questionCount} questions now:`;
+Generate exactly ${normalizedQuestionCount} questions now:`;
 
     const chatCompletion = await groq.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
@@ -167,6 +213,11 @@ app.post('/api/simplify-answer', async (req, res) => {
       return res.status(400).json({ error: 'Missing question or answer' });
     }
 
+    const groq = createGroqClient();
+    if (!groq) {
+      return res.status(500).json({ error: 'Groq API key not configured. Please add your key to the .env file.' });
+    }
+
     const prompt = `A student is struggling to understand this viva answer. Simplify it using everyday language, short sentences, and real-world analogies where helpful. Keep it accurate but make it easy to understand for someone new to the topic.
 
 Question: ${question}
@@ -193,7 +244,7 @@ Provide ONLY the simplified answer text (no labels, no quotes, no markdown). Kee
   }
 });
 
-// API endpoint for Ask AI (OpenRouter)
+// OpenRouter AI endpoint for Ask AI (server.js replacement block)
 app.post('/api/ask-ai', async (req, res) => {
   try {
     const { messages } = req.body;
@@ -203,7 +254,6 @@ app.post('/api/ask-ai', async (req, res) => {
     }
 
     const apiKey = (process.env.OPENROUTER_API_KEY || '').trim();
-    console.log(`[DEBUG] OPENROUTER_API_KEY length=${apiKey.length}, starts="${apiKey.substring(0,8)}", ends="${apiKey.substring(apiKey.length-4)}"`);
     if (!apiKey) {
       return res.status(500).json({ error: 'OpenRouter API key not configured.' });
     }
@@ -239,11 +289,11 @@ app.post('/api/ask-ai', async (req, res) => {
       })
     });
 
-    const data = await response.json();
+    const data = await readJsonResponse(response);
 
     if (!response.ok) {
       console.error('OpenRouter API error:', data);
-      throw new Error(data.error?.message || 'OpenRouter API error');
+      throw new Error(getApiErrorMessage(data, 'OpenRouter API error'));
     }
 
     const assistantMessage = data.choices?.[0]?.message;
@@ -274,7 +324,8 @@ app.post('/api/evaluate-viva', async (req, res) => {
       return res.status(400).json({ error: 'Missing question, modelAnswer, or studentAnswer' });
     }
 
-    if (!process.env.GROQ_API_KEY || process.env.GROQ_API_KEY === 'your_groq_api_key_here') {
+    const groq = createGroqClient();
+    if (!groq) {
       return res.status(500).json({ error: 'Groq API key not configured.' });
     }
 

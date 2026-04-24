@@ -1520,6 +1520,7 @@ document.addEventListener('DOMContentLoaded', function() {
   let analyser = null;
   let animFrameId = null;
   let microphone = null;
+  let audioStream = null;
 
   // Results storage
   let results = []; // { question, answer, studentAnswer, score, feedback, strengths, weaknesses, topicsToFocus, modelAnswer }
@@ -1688,6 +1689,19 @@ document.addEventListener('DOMContentLoaded', function() {
     return result.value;
   }
 
+  async function readJsonResponse(response) {
+    const rawText = await response.text();
+    if (!rawText) {
+      return {};
+    }
+
+    try {
+      return JSON.parse(rawText);
+    } catch {
+      return {};
+    }
+  }
+
   // ===== Start Oral Viva =====
   async function startOralViva() {
     if (!extractedText) {
@@ -1712,7 +1726,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
       });
 
-      const data = await response.json();
+      const data = await readJsonResponse(response);
       if (!response.ok) throw new Error(data.error || 'Server error');
 
       if (data.success && data.questions) {
@@ -1908,13 +1922,29 @@ document.addEventListener('DOMContentLoaded', function() {
     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   }
 
+  function stopAudioStream() {
+    if (!audioStream) return;
+    audioStream.getTracks().forEach(function(track) {
+      track.stop();
+    });
+    audioStream = null;
+  }
+
   function startAudioVisualizer() {
     if (isMobileDevice()) {
       // Mobile microphone hardware can't easily share streams between SpeechRecognition and Web Audio API
       // So we simulate the visualizer on mobile to prevent hijacking the mic and breaking transcription
       simulateWaveform();
     } else {
+      stopAudioStream();
       navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+        if (!isRecording) {
+          stream.getTracks().forEach(function(track) {
+            track.stop();
+          });
+          return;
+        }
+        audioStream = stream;
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioContext.createAnalyser();
         microphone = audioContext.createMediaStreamSource(stream);
@@ -1962,8 +1992,18 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function stopAudioVisualizer() {
-    if (animFrameId) cancelAnimationFrame(animFrameId);
-    if (simInterval) clearInterval(simInterval);
+    if (animFrameId) {
+      cancelAnimationFrame(animFrameId);
+      animFrameId = null;
+    }
+    if (simInterval) {
+      clearInterval(simInterval);
+      simInterval = null;
+    }
+    if (microphone) {
+      try { microphone.disconnect(); } catch (e) {}
+    }
+    stopAudioStream();
     if (audioContext) { audioContext.close().catch(function(){}); audioContext = null; }
     analyser = null;
     microphone = null;
@@ -2026,7 +2066,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
       });
 
-      const data = await response.json();
+      const data = await readJsonResponse(response);
       if (!response.ok) throw new Error(data.error || 'Evaluation failed');
 
       if (data.success) {

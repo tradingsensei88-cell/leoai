@@ -1,6 +1,13 @@
 const Groq = require('groq-sdk');
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+function getGroqClient() {
+  const apiKey = (process.env.GROQ_API_KEY || '').trim();
+  if (!apiKey || apiKey === 'your_groq_api_key_here') {
+    return null;
+  }
+
+  return new Groq({ apiKey });
+}
 
 module.exports = async function handler(req, res) {
   // CORS headers
@@ -21,6 +28,11 @@ module.exports = async function handler(req, res) {
 
     if (!question || !answer) {
       return res.status(400).json({ error: 'Missing question or answer' });
+    }
+
+    const groq = getGroqClient();
+    if (!groq) {
+      return res.status(500).json({ error: 'Groq API key not configured.' });
     }
 
     const prompt = `A student is struggling to understand this viva answer. Simplify it using everyday language, short sentences, and real-world analogies where helpful. Keep it accurate but make it easy to understand for someone new to the topic.

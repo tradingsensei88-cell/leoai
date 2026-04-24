@@ -1,6 +1,39 @@
 // OpenRouter AI endpoint for Ask AI feature
 // Uses nvidia/nemotron-nano-12b-v2-vl:free model with vision capabilities
 
+async function readJsonResponse(response) {
+  const rawText = await response.text();
+  if (!rawText) {
+    return {};
+  }
+
+  try {
+    return JSON.parse(rawText);
+  } catch {
+    return { rawText };
+  }
+}
+
+function getApiErrorMessage(payload, fallbackMessage) {
+  if (!payload || typeof payload !== 'object') {
+    return fallbackMessage;
+  }
+
+  if (typeof payload.error === 'string' && payload.error.trim()) {
+    return payload.error;
+  }
+
+  if (payload.error && typeof payload.error.message === 'string' && payload.error.message.trim()) {
+    return payload.error.message;
+  }
+
+  if (typeof payload.message === 'string' && payload.message.trim()) {
+    return payload.message;
+  }
+
+  return fallbackMessage;
+}
+
 module.exports = async function handler(req, res) {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -22,7 +55,7 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Missing or invalid messages' });
     }
 
-    const apiKey = process.env.OPENROUTER_API_KEY;
+    const apiKey = (process.env.OPENROUTER_API_KEY || '').trim();
     if (!apiKey) {
       return res.status(500).json({ error: 'OpenRouter API key not configured.' });
     }
@@ -65,11 +98,11 @@ module.exports = async function handler(req, res) {
       })
     });
 
-    const data = await response.json();
+    const data = await readJsonResponse(response);
 
     if (!response.ok) {
       console.error('OpenRouter API error:', data);
-      throw new Error(data.error?.message || 'OpenRouter API error');
+      throw new Error(getApiErrorMessage(data, 'OpenRouter API error'));
     }
 
     const assistantMessage = data.choices?.[0]?.message;

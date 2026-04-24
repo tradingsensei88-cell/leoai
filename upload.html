@@ -14,6 +14,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <!-- Mammoth.js for DOCX text extraction -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <!-- jsPDF for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
   <style>
     [data-w-id] { opacity: 1 !important; transform: none !important; }
@@ -620,6 +623,16 @@
       background: linear-gradient(135deg, #00E5D1, #25ADF9);
       color: #000;
     }
+    .results-btn-download {
+      background: linear-gradient(135deg, rgba(168,85,247,0.15), rgba(236,72,153,0.15));
+      border: 1px solid rgba(168,85,247,0.3);
+      color: #c084fc;
+    }
+    .results-btn-download:hover {
+      background: linear-gradient(135deg, rgba(168,85,247,0.25), rgba(236,72,153,0.25));
+      border-color: rgba(168,85,247,0.5);
+      box-shadow: 0 8px 30px rgba(168,85,247,0.15);
+    }
     .results-btn-secondary {
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.1);
@@ -1081,6 +1094,10 @@
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           Show All Answers
         </button>
+        <button class="results-btn results-btn-download" id="downloadPdfBtn" onclick="downloadQuestionsAsPdf()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download as PDF
+        </button>
         <button class="results-btn results-btn-secondary" onclick="resetUpload()">
           ← Upload Another File
         </button>
@@ -1157,6 +1174,7 @@ document.addEventListener('DOMContentLoaded', function() {
   let selectedCount = 20;
   let selectedPersona = 'friendly';
   let allAnswersShown = false;
+  let generatedQuestions = [];
 
   // Elements
   const uploadZone = document.getElementById('fileUploadZone');
@@ -1334,6 +1352,19 @@ document.addEventListener('DOMContentLoaded', function() {
     return result.value;
   }
 
+  async function readJsonResponse(response) {
+    const rawText = await response.text();
+    if (!rawText) {
+      return {};
+    }
+
+    try {
+      return JSON.parse(rawText);
+    } catch {
+      return {};
+    }
+  }
+
   // Generate questions via API
   async function generateQuestions() {
     if (!extractedText) {
@@ -1356,13 +1387,14 @@ document.addEventListener('DOMContentLoaded', function() {
         })
       });
 
-      const data = await response.json();
+      const data = await readJsonResponse(response);
 
       if (!response.ok) {
-        throw new Error(data.error || 'Server error');
+        throw new Error(data.error || data.message || 'Server error');
       }
 
       if (data.success && data.questions) {
+        generatedQuestions = data.questions;
         showResults(data.questions);
       } else {
         throw new Error('Invalid response from server');
@@ -1450,7 +1482,203 @@ document.addEventListener('DOMContentLoaded', function() {
     uploadSection.style.display = '';
     window.removeFile();
     allAnswersShown = false;
+    generatedQuestions = [];
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Download questions as PDF
+  window.downloadQuestionsAsPdf = function() {
+    if (!generatedQuestions || generatedQuestions.length === 0) {
+      showError('No questions to download.');
+      return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 20;
+    const contentWidth = pageWidth - margin * 2;
+    let y = margin;
+
+    const fileName = uploadedFile ? uploadedFile.name : 'document';
+    const totalQuestions = generatedQuestions.length;
+    const easyCount = generatedQuestions.filter(q => q.difficulty === 'easy').length;
+    const mediumCount = generatedQuestions.filter(q => q.difficulty === 'medium').length;
+    const hardCount = generatedQuestions.filter(q => q.difficulty === 'hard').length;
+
+    // --- Title Page ---
+    // Background color strip
+    doc.setFillColor(3, 3, 3);
+    doc.rect(0, 0, pageWidth, 85, 'F');
+
+    // Accent bar
+    doc.setFillColor(0, 229, 209);
+    doc.rect(0, 85, pageWidth, 2, 'F');
+
+    // Title
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(28);
+    doc.setTextColor(255, 255, 255);
+    doc.text('Viva Questions', pageWidth / 2, 40, { align: 'center' });
+
+    // Subtitle
+    doc.setFontSize(12);
+    doc.setTextColor(180, 180, 180);
+    doc.text('Generated by Leo AI', pageWidth / 2, 52, { align: 'center' });
+
+    // Source file
+    doc.setFontSize(10);
+    doc.setTextColor(140, 140, 140);
+    doc.text('Source: ' + fileName, pageWidth / 2, 65, { align: 'center' });
+
+    // Date
+    const dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    doc.text(dateStr, pageWidth / 2, 75, { align: 'center' });
+
+    // Stats section
+    y = 100;
+    doc.setFillColor(245, 245, 245);
+    doc.roundedRect(margin, y, contentWidth, 30, 3, 3, 'F');
+
+    const statWidth = contentWidth / 4;
+    const statsY = y + 12;
+    const statsLabelY = y + 22;
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.setTextColor(30, 30, 30);
+    doc.text(String(totalQuestions), margin + statWidth * 0.5, statsY, { align: 'center' });
+    doc.setFontSize(8);
+    doc.setTextColor(120, 120, 120);
+    doc.text('TOTAL', margin + statWidth * 0.5, statsLabelY, { align: 'center' });
+
+    doc.setFontSize(18);
+    doc.setTextColor(34, 197, 94);
+    doc.text(String(easyCount), margin + statWidth * 1.5, statsY, { align: 'center' });
+    doc.setFontSize(8);
+    doc.setTextColor(120, 120, 120);
+    doc.text('EASY', margin + statWidth * 1.5, statsLabelY, { align: 'center' });
+
+    doc.setFontSize(18);
+    doc.setTextColor(251, 191, 36);
+    doc.text(String(mediumCount), margin + statWidth * 2.5, statsY, { align: 'center' });
+    doc.setFontSize(8);
+    doc.setTextColor(120, 120, 120);
+    doc.text('MEDIUM', margin + statWidth * 2.5, statsLabelY, { align: 'center' });
+
+    doc.setFontSize(18);
+    doc.setTextColor(239, 68, 68);
+    doc.text(String(hardCount), margin + statWidth * 3.5, statsY, { align: 'center' });
+    doc.setFontSize(8);
+    doc.setTextColor(120, 120, 120);
+    doc.text('HARD', margin + statWidth * 3.5, statsLabelY, { align: 'center' });
+
+    // --- Questions Pages ---
+    doc.addPage();
+    y = margin;
+
+    function addFooter(pageDoc, pageNum) {
+      pageDoc.setFontSize(8);
+      pageDoc.setTextColor(160, 160, 160);
+      pageDoc.text('Leo AI — Viva Questions', margin, pageHeight - 10);
+      pageDoc.text('Page ' + pageNum, pageWidth - margin, pageHeight - 10, { align: 'right' });
+      // Thin line above footer
+      pageDoc.setDrawColor(220, 220, 220);
+      pageDoc.setLineWidth(0.3);
+      pageDoc.line(margin, pageHeight - 15, pageWidth - margin, pageHeight - 15);
+    }
+
+    let pageNum = 2;
+
+    generatedQuestions.forEach(function(q, idx) {
+      const qNum = q.id || (idx + 1);
+      const difficulty = (q.difficulty || 'medium').charAt(0).toUpperCase() + (q.difficulty || 'medium').slice(1);
+
+      // Estimate space needed for this Q&A block
+      doc.setFontSize(11);
+      const questionLines = doc.splitTextToSize('Q' + qNum + '. ' + q.question, contentWidth - 5);
+      doc.setFontSize(10);
+      const answerLines = doc.splitTextToSize(q.answer, contentWidth - 10);
+      const blockHeight = 12 + (questionLines.length * 5.5) + 8 + (answerLines.length * 5) + 15;
+
+      // Check if we need a new page
+      if (y + blockHeight > pageHeight - 25) {
+        addFooter(doc, pageNum);
+        doc.addPage();
+        pageNum++;
+        y = margin;
+      }
+
+      // Question number + difficulty badge area
+      // Difficulty color
+      let diffColor;
+      if (q.difficulty === 'easy') { diffColor = [34, 197, 94]; }
+      else if (q.difficulty === 'hard') { diffColor = [239, 68, 68]; }
+      else { diffColor = [251, 191, 36]; }
+
+      // Question number circle
+      doc.setFillColor(0, 229, 209);
+      doc.circle(margin + 4, y + 4, 4, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.setTextColor(0, 0, 0);
+      doc.text(String(qNum), margin + 4, y + 5.5, { align: 'center' });
+
+      // Difficulty badge
+      const badgeText = difficulty;
+      doc.setFontSize(7);
+      const badgeWidth = doc.getTextWidth(badgeText) + 6;
+      doc.setFillColor(diffColor[0], diffColor[1], diffColor[2]);
+      doc.roundedRect(margin + 12, y + 0.5, badgeWidth, 7, 2, 2, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.text(badgeText, margin + 15, y + 5.5);
+
+      y += 12;
+
+      // Question text
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.setTextColor(30, 30, 30);
+      doc.text(questionLines, margin + 2, y);
+      y += questionLines.length * 5.5 + 3;
+
+      // Answer label
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.setTextColor(0, 180, 165);
+      doc.text('MODEL ANSWER', margin + 5, y);
+      y += 5;
+
+      // Answer text with left border
+      doc.setDrawColor(0, 229, 209);
+      doc.setLineWidth(0.8);
+      const answerStartY = y - 2;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.setTextColor(70, 70, 70);
+      doc.text(answerLines, margin + 8, y);
+      const answerEndY = y + answerLines.length * 5;
+      doc.line(margin + 4, answerStartY, margin + 4, answerEndY);
+
+      y = answerEndY + 8;
+
+      // Separator line (light)
+      if (idx < generatedQuestions.length - 1) {
+        doc.setDrawColor(230, 230, 230);
+        doc.setLineWidth(0.2);
+        doc.line(margin, y, pageWidth - margin, y);
+        y += 8;
+      }
+    });
+
+    // Add footer to last page
+    addFooter(doc, pageNum);
+
+    // Save
+    const safeName = fileName.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_\-\s]/g, '').trim() || 'viva_questions';
+    doc.save(safeName + '_viva_questions.pdf');
   };
 
   // Helpers
@@ -1502,10 +1730,10 @@ document.addEventListener('DOMContentLoaded', function() {
         body: JSON.stringify({ question, answer })
       });
 
-      const data = await response.json();
+      const data = await readJsonResponse(response);
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to simplify');
+        throw new Error(data.error || data.message || 'Failed to simplify');
       }
 
       if (data.success && data.simplified) {
